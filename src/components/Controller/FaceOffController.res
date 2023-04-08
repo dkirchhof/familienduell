@@ -69,9 +69,15 @@ let make = props => {
     FaceOff.addStrike(props.faceOff, team)->props.update
   }
 
+  let points = props.faceOff.points
+  let x = FaceOff.getMultiplicator(props.faceOff)
+  let pointsX = FaceOff.getPointsWithMultiplicator(props.faceOff)
+
   <div>
-    <div> {React.string(`Runde ${roundToString(props.faceOff.round)}`)} </div>
+    <div> {React.string(roundToString(props.faceOff.round))} </div>
     <div> {React.string(`Frage: ${props.faceOff.question.text}`)} </div>
+    <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
+    <div> {React.string(`Punkte x${Int.toString(x)}: ${Int.toString(pointsX)}`)} </div>
     <table className=Styles.table>
       <tbody>
         {props.faceOff.question.answers
@@ -119,12 +125,6 @@ let make = props => {
         </tr>
       </tbody>
     </table>
-    <div> {React.string(`Summe aktuelle Runde: ${props.faceOff.points->Int.toString}`)} </div>
-    <div>
-      {React.string(
-        `Summe aktuelle Runde: ${props.faceOff->FaceOff.getPointsWithMultiplicator->Int.toString}`,
-      )}
-    </div>
     <button onClick={_ => props.nextRound(Team1)}>
       {React.string("Runde beenden -> Team 1")}
     </button>

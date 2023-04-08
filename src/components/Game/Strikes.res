@@ -15,22 +15,24 @@ module Styles = {
     }
  `)
 
-  let x = css(`
-    color: ${Theme.Colors.get(#tertiary)};
- `)
+  let x = (strikes, min) => css(`color: ${Theme.Colors.get(strikes >= min ? #accent : #tertiary)}`)
 }
 
-@react.component
-let make = () =>
+type props = {
+  team1: Team.t,
+  team2: Team.t,
+}
+
+let make = props =>
   <div className=Styles.container>
     <div>
-      <span className=Styles.x> {React.string("X")} </span>
-      <span className=Styles.x> {React.string("X")} </span>
-      <span className=Styles.x> {React.string("X")} </span>
+      <span className={Styles.x(props.team1.strikes, 1)}> {React.string("X")} </span>
+      <span className={Styles.x(props.team1.strikes, 2)}> {React.string("X")} </span>
+      <span className={Styles.x(props.team1.strikes, 3)}> {React.string("X")} </span>
     </div>
     <div>
-      <span className=Styles.x> {React.string("X")} </span>
-      <span className=Styles.x> {React.string("X")} </span>
-      <span className=Styles.x> {React.string("X")} </span>
+      <span className={Styles.x(props.team2.strikes, 1)}> {React.string("X")} </span>
+      <span className={Styles.x(props.team2.strikes, 2)}> {React.string("X")} </span>
+      <span className={Styles.x(props.team2.strikes, 3)}> {React.string("X")} </span>
     </div>
   </div>

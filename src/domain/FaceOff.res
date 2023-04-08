@@ -18,12 +18,16 @@ let getNextRound = round =>
   | Round4 => None
   }
 
-let getPointsWithMultiplicator = faceOff => {
+let getMultiplicator = faceOff => {
   switch faceOff.round {
-  | Round1 | Round2 => faceOff.points
-  | Round3 => faceOff.points * 2
-  | Round4 => faceOff.points * 3
+  | Round1 | Round2 => 1
+  | Round3 => 2
+  | Round4 => 3
   }
+}
+
+let getPointsWithMultiplicator = faceOff => {
+  faceOff.points * getMultiplicator(faceOff)
 }
 
 let revealAnswer = (faceOff, answer) => {

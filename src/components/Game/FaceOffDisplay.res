@@ -56,31 +56,32 @@ module Styles = {
   `)
 }
 
-type props = {
-  /* gameType: Game.subGame, */
-  team1: Team.t,
-  team2: Team.t,
-}
+type props = {faceOff: FaceOff.t}
 
-let make = props => {
+let make = (props: props) => {
   <div className=Styles.container>
-    /* <main> */
-    /*   <ol className=Styles.list> */
-    /*     {props.round.question.answers */
-    /*     ->Array.mapWithIndex((answer, i) => */
-    /*       <li key={Int.toString(i)} className=Styles.answer> */
-    /*         <span> {answer.text->String.padEnd(31, "_")->React.string} </span> */
-    /*         <span> {React.string(Int.toString(answer.count))} </span> */
-    /*       </li> */
-    /*     ) */
-    /*     ->React.array} */
-    /*   </ol> */
-    /*   <div className=Styles.sum> {React.string("SUMME 23")} </div> */
-    /* </main> */
-    /* <footer> */
-    /*   <div> {props.team1.points->Int.toString->React.string} </div> */
-    /*   <div> {React.string("23")} </div> */
-    /*   <div> {props.team2.points->Int.toString->React.string} </div> */
-    /* </footer> */
+    <main>
+      <ol className=Styles.list>
+        {props.faceOff.question.answers
+        ->Array.mapWithIndex((answer, i) => {
+          let text = answer.revealed ? String.padEnd(answer.text, 31, "_") : String.repeat("_", 31)
+          let pointsText = answer.revealed ? Int.toString(answer.count) : "--"
+
+          <li key={Int.toString(i)} className=Styles.answer>
+            <span> {React.string(text)} </span>
+            <span> {React.string(pointsText)} </span>
+          </li>
+        })
+        ->React.array}
+      </ol>
+      <div className=Styles.sum>
+        {React.string(`Summe ${Int.toString(props.faceOff.points)}`)}
+      </div>
+    </main>
+    <footer>
+      <div> {props.faceOff.team1.points->Int.toString->React.string} </div>
+      <div> {props.faceOff->FaceOff.getPointsWithMultiplicator->Int.toString->React.string} </div>
+      <div> {props.faceOff.team2.points->Int.toString->React.string} </div>
+    </footer>
   </div>
 }

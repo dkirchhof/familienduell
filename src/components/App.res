@@ -2,7 +2,9 @@ type app = Game | Controller
 
 @react.component
 let make = () => {
-  let (app, setApp) = React.useState(_ => Some(Controller))
+  let (app, setApp) = React.useState(_ => None)
+  /* let (app, setApp) = React.useState(_ => Some(Game)) */
+  /* let (app, setApp) = React.useState(_ => Some(Controller)) */
 
   switch app {
   | Some(Game) => <GameApp />

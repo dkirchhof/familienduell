@@ -1,6 +1,25 @@
 module Styles = {
   open Emotion
 
+  let globalStyle = `
+  :root {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: ${Theme.Colors.get(#secondary)};
+    background: ${Theme.Colors.get(#primary)};
+
+    font-family: Ericsson, monospace;
+    font-size: 3rem;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+  `
+
   let display = css(`
     position: relative;
     width: 25rem;
@@ -24,23 +43,28 @@ module Styles = {
 
 @react.component
 let make = () => {
-  /* let (game, setGame) = React.useState(_ => Game.make()) */
+  let (game, setGame) = React.useState(_ => None)
 
-  /* let onBuzzer = team => { */
-  /*   /1* setGame(_ => Game.buzzer(game, team)) *1/ */
-    
-  /* } */
+  React.useEffect0(() => {
+    Emotion.injectGlobal(Styles.globalStyle)
 
-  /* switch game.round { */
-  /* | Round1(round) => */
-  /*   <> */
-  /*     <div className=Styles.display> */
-  /*       <FaceOffDisplay round team1=game.team1 team2=game.team2 /> */
-  /*     </div> */
-  /*     <Strikes /> */
-  /*   </> */
-  /* | _ => React.null */
-  /* } */
+    Broadcaster.listen(event => {
+      switch event {
+      | UpdateGame(game) => setGame(_ => Some(game))
+      }
+    })
 
-  React.null
+    Some(Broadcaster.unlisten)
+  })
+
+  switch game {
+  | Some(FaceOff(faceOff)) =>
+    <>
+      <div className=Styles.display>
+        <FaceOffDisplay faceOff />
+      </div>
+      <Strikes team1=faceOff.team1 team2=faceOff.team2 />
+    </>
+  | _ => React.null
+  }
 }
