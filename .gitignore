@@ -1,0 +1,9 @@
+lib/
+node_modules/
+
+bundle.js
+bundle.js.map
+
+*.mjs
+
+!esbuild.mjs
