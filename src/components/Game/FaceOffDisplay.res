@@ -31,14 +31,20 @@ module Styles = {
   `,
   )
 
-  let list = css(`
+  let list = css(
+    `
+    view-transition-name: list;
+    contain: paint;
+
     counter-set: list;
 
     list-style: none;
     margin: 0;
     padding: 0;
-
-  `)
+    
+    background: ${Theme.Colors.get(#primary)};
+  `,
+  )
 
   let answer = css(`
     ::before {
@@ -75,7 +81,7 @@ let make = (props: props) => {
         ->React.array}
       </ol>
       <div className=Styles.sum>
-        {React.string(`Summe ${Int.toString(props.faceOff.points)}`)}
+        {React.string(`Summe ${props.faceOff.points->Int.toString->String.padStart(2, " ")}`)}
       </div>
     </main>
     <footer>

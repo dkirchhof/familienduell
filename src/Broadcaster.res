@@ -1,4 +1,4 @@
-type data = UpdateGame(Game.t)
+type data = Sync(Game.t) | Reveal(Game.t)
 type event = {data: data}
 
 module BroadcastChannel = {

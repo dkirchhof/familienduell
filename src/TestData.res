@@ -8,7 +8,7 @@ let questions: array<Question.t> = [
       {text: "Grün", count: 20, revealed: false},
       {text: "Gelb", count: 6, revealed: false},
       {text: "Schwarz", count: 3, revealed: false},
-      {text: "Weiss", count: 2, revealed: false},
+      {text: "Hier steht eine lange Antwort", count: 2, revealed: false},
     ],
   },
 ]

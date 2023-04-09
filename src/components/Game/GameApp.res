@@ -1,3 +1,5 @@
+@send external startViewTransition: (Dom.document, unit => unit) => unit = "startViewTransition"
+
 module Styles = {
   open Emotion
 
@@ -50,7 +52,16 @@ let make = () => {
 
     Broadcaster.listen(event => {
       switch event {
-      | UpdateGame(game) => setGame(_ => Some(game))
+      | Sync(game) => setGame(_ => Some(game))
+      | Reveal(game) =>
+        startViewTransition(
+          document,
+          () => {
+            setGame(_ => Some(game))
+          },
+        )
+
+        AudioPlayer.play(#reveal)
       }
     })
 

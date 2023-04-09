@@ -3,13 +3,13 @@ let make = () => {
   let (game, setGame) = React.useState(_ => Game.make())
 
   React.useEffect1(() => {
-    Broadcaster.UpdateGame(game)->Broadcaster.sendEvent
+    Broadcaster.Reveal(game)->Broadcaster.sendEvent
 
     None
   }, [game])
 
   let sync = () => {
-    Broadcaster.UpdateGame(game)->Broadcaster.sendEvent
+    Broadcaster.Sync(game)->Broadcaster.sendEvent
   }
 
   let updateFaceOff = faceOff => {
