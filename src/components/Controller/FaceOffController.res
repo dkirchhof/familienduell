@@ -46,55 +46,54 @@ let roundToString = (value: FaceOff.round) =>
   | Round4 => "Runde 4"
   }
 
-type props = {faceOff: FaceOff.t, nextRound: Team.choice => unit}
+type props = {
+  game: FaceOff.t,
+  updateGame: FaceOff.t => FaceOff.t,
+  nextRound: Team.choice => unit,
+}
 
 let make = props => {
-  let (game, updateGame) = SimpleState.use(props.faceOff)
-
-  React.useEffect1(() => {
-    let _ = updateGame(props.faceOff)
-
-    None
-  }, [props.faceOff])
-
   let selectAnswer = answer => {
-    FaceOff.selectAnswer(game, answer)
-    ->updateGame
+    FaceOff.selectAnswer(props.game, answer)
+    ->props.updateGame
     ->Broadcaster.Reveal
     ->Broadcaster.sendEvent
   }
 
   let revealAnswer = answer => {
-    FaceOff.revealAnswer(game, answer)
-    ->updateGame
+    FaceOff.revealAnswer(props.game, answer)
+    ->props.updateGame
     ->Broadcaster.Reveal
     ->Broadcaster.sendEvent
   }
 
   let lockTeam = team => {
-    FaceOff.lockTeam(game, team)->updateGame->Broadcaster.Strike->Broadcaster.sendEvent
+    FaceOff.lockTeam(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent
 
     let _ = setTimeout(() => {
-      FaceOff.unlockTeam(game, team)->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+      FaceOff.unlockTeam(props.game, team)
+      ->props.updateGame
+      ->Broadcaster.Sync
+      ->Broadcaster.sendEvent
     }, 1000)
   }
 
   let addStrike = team => {
-    FaceOff.addStrike(game, team)->updateGame->Broadcaster.Strike->Broadcaster.sendEvent
+    FaceOff.addStrike(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent
   }
 
-  let points = game.points
-  let x = FaceOff.getMultiplicator(game)
-  let pointsX = FaceOff.getPointsWithMultiplicator(game)
+  let points = props.game.points
+  let x = FaceOff.getMultiplicator(props.game)
+  let pointsX = FaceOff.getPointsWithMultiplicator(props.game)
 
   <div>
-    <div> {React.string(roundToString(game.round))} </div>
-    <div> {React.string(`Frage: ${game.question.text}`)} </div>
+    <div> {React.string(roundToString(props.game.round))} </div>
+    <div> {React.string(`Frage: ${props.game.question.text}`)} </div>
     <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
     <div> {React.string(`Punkte x${Int.toString(x)}: ${Int.toString(pointsX)}`)} </div>
     <table className=Styles.table>
       <tbody>
-        {game.question.answers
+        {props.game.question.answers
         ->Array.mapWithIndex((answer, i) =>
           <tr key={Int.toString(i)} disabled={answer.revealed}>
             <th> {(i + 1)->Int.toString->React.string} </th>
@@ -115,9 +114,9 @@ let make = props => {
       <tbody>
         <tr>
           <th> {React.string("Team 1")} </th>
-          <td> {React.string(`Punkte: ${Int.toString(game.team1.points)}`)} </td>
-          <td> {React.string(`Gesperrt: ${boolToString(game.team1.locked)}`)} </td>
-          <td> {React.string(`Strikes: ${Int.toString(game.team1.strikes)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(props.game.team1.points)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(props.game.team1.locked)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(props.game.team1.strikes)}`)} </td>
           <td>
             <button onClick={_ => lockTeam(Team1)}> {React.string("Sperren")} </button>
           </td>
@@ -127,9 +126,9 @@ let make = props => {
         </tr>
         <tr>
           <th> {React.string("Team 2")} </th>
-          <td> {React.string(`Punkte: ${Int.toString(game.team2.points)}`)} </td>
-          <td> {React.string(`Gesperrt: ${boolToString(game.team2.locked)}`)} </td>
-          <td> {React.string(`Strikes: ${Int.toString(game.team2.strikes)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(props.game.team2.points)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(props.game.team2.locked)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(props.game.team2.strikes)}`)} </td>
           <td>
             <button onClick={_ => lockTeam(Team2)}> {React.string("Sperren")} </button>
           </td>

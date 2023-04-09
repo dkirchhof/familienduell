@@ -12,6 +12,12 @@ let make = () => {
     None
   })
 
+  let updateFaceOff = faceOff => {
+    faceOff->FaceOff->updateGame->ignore
+
+    faceOff
+  }
+
   let nextRound = winner => {
     questionIndex.current = questionIndex.current + 1
 
@@ -21,6 +27,6 @@ let make = () => {
   }
 
   switch game {
-  | FaceOff(faceOff) => <FaceOffController faceOff nextRound />
+  | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff nextRound />
   }
 }
