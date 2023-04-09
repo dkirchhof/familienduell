@@ -1,4 +1,4 @@
-type file = [#reveal]
+type file = [#reveal | #fail]
 
 let play: file => unit = %raw(`
   function (file) {

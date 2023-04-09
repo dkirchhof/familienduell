@@ -52,16 +52,21 @@ let make = () => {
 
     Broadcaster.listen(event => {
       switch event {
-      | Sync(game) => setGame(_ => Some(game))
+      | Sync(game) => setGame(_ => Some(Game.FaceOff(game)))
       | Reveal(game) =>
         startViewTransition(
           document,
           () => {
-            setGame(_ => Some(game))
+            setGame(_ => Some(Game.FaceOff(game)))
           },
         )
 
         AudioPlayer.play(#reveal)
+      | Strike(game) => {
+          setGame(_ => Some(Game.FaceOff(game)))
+
+          AudioPlayer.play(#fail)
+        }
       }
     })
 

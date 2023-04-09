@@ -1,29 +1,26 @@
 @react.component
 let make = () => {
-  let (game, setGame) = React.useState(_ => Game.make())
+  let questionIndex = React.useRef(0)
 
-  React.useEffect1(() => {
-    Broadcaster.Reveal(game)->Broadcaster.sendEvent
+  let (game, updateGame) = SimpleState.use(Game.make(questionIndex.current))
+
+  React.useEffect0(() => {
+    switch game {
+    | FaceOff(faceOff) => Broadcaster.Sync(faceOff)->Broadcaster.sendEvent
+    }
 
     None
-  }, [game])
-
-  let sync = () => {
-    Broadcaster.Sync(game)->Broadcaster.sendEvent
-  }
-
-  let updateFaceOff = faceOff => {
-    setGame(_ => FaceOff(faceOff))
-  }
+  })
 
   let nextRound = winner => {
-    setGame(_ => Game.nextRound(game, winner))
+    questionIndex.current = questionIndex.current + 1
+
+    switch updateGame(Game.nextRound(game, questionIndex.current, winner)) {
+    | FaceOff(faceOff) => Broadcaster.Sync(faceOff)->Broadcaster.sendEvent
+    }
   }
 
-  <>
-    <button onClick={_ => sync()}> {React.string("Synchronisieren")} </button>
-    {switch game {
-    | FaceOff(faceOff) => <FaceOffController faceOff update=updateFaceOff nextRound />
-    }}
-  </>
+  switch game {
+  | FaceOff(faceOff) => <FaceOffController faceOff nextRound />
+  }
 }

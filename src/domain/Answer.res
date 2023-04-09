@@ -4,4 +4,10 @@ type t = {
   revealed: bool,
 }
 
+let make = (text, count) => {
+  text,
+  count,
+  revealed: false,
+}
+
 let reveal = answer => {...answer, revealed: true}

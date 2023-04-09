@@ -1,8 +1,13 @@
 type t = FaceOff(FaceOff.t) // | FastMoney(fastMoney)
 
-let make = () => FaceOff.make(Round1, TestData.questions[0]->Option.getExn)->FaceOff
+let make = questionIndex => {
+  let numberOfAnswers = FaceOff.getNumberOfAnswers(Round1)
+  let question = Question.make(TestData.questions[questionIndex]->Option.getExn, numberOfAnswers)
 
-let nextRound = (game, winner: Team.choice) => {
+  FaceOff.make(Round1, question)->FaceOff
+}
+
+let nextRound = (game, questionIndex, winner: Team.choice) => {
   switch game {
   | FaceOff(faceOff) => {
       let maybeNextRound = FaceOff.getNextRound(faceOff.round)
@@ -16,9 +21,16 @@ let nextRound = (game, winner: Team.choice) => {
           | Team2 => (faceOff.team1.points, faceOff.team2.points + pointsToAdd)
           }
 
+          let numberOfAnswers = FaceOff.getNumberOfAnswers(nextRound)
+
+          let question = Question.make(
+            TestData.questions[questionIndex]->Option.getExn,
+            numberOfAnswers,
+          )
+
           FaceOff({
             round: nextRound,
-            question: TestData.questions[0]->Option.getExn,
+            question,
             points: 0,
             team1: pointsPerTeam->fst->Team.makeWithPoints,
             team2: pointsPerTeam->snd->Team.makeWithPoints,

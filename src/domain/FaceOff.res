@@ -26,6 +26,15 @@ let getMultiplicator = faceOff => {
   }
 }
 
+let getNumberOfAnswers = round => {
+  switch round {
+  | Round1 => 6
+  | Round2 => 5
+  | Round3 => 4
+  | Round4 => 3
+  }
+}
+
 let getPointsWithMultiplicator = faceOff => {
   faceOff.points * getMultiplicator(faceOff)
 }
