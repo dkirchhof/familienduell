@@ -24,7 +24,9 @@ Emotion.injectGlobal(
     animation-delay: 1.5s;
   }
 
-  ::view-transition-old(list) {
+  ::view-transition-old(list), 
+  ::view-transition-old(answer-player-1-text), 
+  ::view-transition-old(answer-player-2-text) {
     animation: none;
   }
 
@@ -32,6 +34,13 @@ Emotion.injectGlobal(
     mix-blend-mode: normal;
 
     animation: reveal-right 1.5s steps(30);
+  }
+
+  ::view-transition-new(answer-player-1-text),
+  ::view-transition-new(answer-player-2-text) {
+    mix-blend-mode: normal;
+
+    animation: reveal-right 0.75s steps(30);
   }
 
   :root {

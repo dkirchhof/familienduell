@@ -56,14 +56,16 @@ let make = props => {
   let selectAnswer = answer => {
     FaceOff.selectAnswer(props.game, answer)
     ->props.updateGame
-    ->Broadcaster.Reveal
+    ->FaceOff
+    ->Broadcaster.RevealBoth
     ->Broadcaster.sendEvent
   }
 
   let revealAnswer = answer => {
     FaceOff.revealAnswer(props.game, answer)
     ->props.updateGame
-    ->Broadcaster.Reveal
+    ->FaceOff
+    ->Broadcaster.RevealBoth
     ->Broadcaster.sendEvent
   }
 
@@ -73,6 +75,7 @@ let make = props => {
     let _ = setTimeout(() => {
       FaceOff.unlockTeam(props.game, team)
       ->props.updateGame
+      ->FaceOff
       ->Broadcaster.Sync
       ->Broadcaster.sendEvent
     }, 1000)

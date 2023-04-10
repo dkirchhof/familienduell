@@ -1,4 +1,4 @@
-type sound = [#reveal | #fail]
+type sound = [#revealText | #revealCount | #revealBoth | #fail]
 
 let play: sound => unit = %raw(`
   function (sound) {

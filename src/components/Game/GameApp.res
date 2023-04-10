@@ -47,26 +47,39 @@ module Styles = {
 let make = () => {
   let (game, setGame) = React.useState(_ => None)
 
+  let updateGame = game => {
+    setGame(_ => Some(game))
+  }
+
+  let updateGameAnimated = game => {
+    startViewTransition(document, () => {
+      setGame(_ => Some(game))
+    })
+  }
+
   React.useEffect0(() => {
     Emotion.injectGlobal(Styles.globalStyle)
 
     Broadcaster.listen(event => {
       switch event {
-      | Sync(game) => setGame(_ => Some(Game.FaceOff(game)))
-      | Reveal(game) =>
-        startViewTransition(
-          document,
-          () => {
-            setGame(_ => Some(Game.FaceOff(game)))
-          },
-        )
+      | Sync(game) => updateGame(game)
+      | RevealBoth(game) =>
+        updateGameAnimated(game)
+        AudioPlayer.play(#revealBoth)
+      | RevealAnswerText(game) =>
+        updateGameAnimated(game)
+        AudioPlayer.play(#revealText)
+      | RevealAnswerCount(game, count) =>
+        updateGame(game)
 
-        AudioPlayer.play(#reveal)
-      | Strike(game) => {
-          setGame(_ => Some(Game.FaceOff(game)))
-
+        if count > 0 {
+          AudioPlayer.play(#revealCount)
+        } else {
           AudioPlayer.play(#fail)
         }
+      | Strike(game) =>
+        updateGame(Game.FaceOff(game))
+        AudioPlayer.play(#fail)
       }
     })
 
@@ -81,6 +94,13 @@ let make = () => {
       </div>
       <Strikes team1=faceOff.team1 team2=faceOff.team2 />
     </>
-  | _ => React.null
+  | Some(FastMoney(fastMoney)) =>
+    <>
+      <div className=Styles.display>
+        <FastMoneyDisplay fastMoney />
+      </div>
+      <Strikes team1={Team.make()} team2={Team.make()} />
+    </>
+  | None => React.null
   }
 }

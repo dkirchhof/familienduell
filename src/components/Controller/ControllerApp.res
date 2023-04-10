@@ -5,11 +5,7 @@ let make = () => {
   let (game, updateGame) = SimpleState.use(Game.make(questionIndex.current))
 
   React.useEffect0(() => {
-    switch game {
-    | FaceOff(faceOff) => Broadcaster.Sync(faceOff)->Broadcaster.sendEvent
-    /* | FastMoney(_) => panic("don't start with fast money") */
-    | FastMoney(_) => ()
-    }
+    Broadcaster.Sync(game)->Broadcaster.sendEvent
 
     None
   })
@@ -29,9 +25,10 @@ let make = () => {
   let nextRound = winner => {
     questionIndex.current = questionIndex.current + 1
 
-    switch updateGame(Game.nextRound(game, questionIndex.current, winner)) {
-    | FaceOff(faceOff) => Broadcaster.Sync(faceOff)->Broadcaster.sendEvent
-    }
+    Game.nextRound(game, questionIndex.current, winner)
+    ->updateGame
+    ->Broadcaster.Sync
+    ->Broadcaster.sendEvent
   }
 
   switch game {

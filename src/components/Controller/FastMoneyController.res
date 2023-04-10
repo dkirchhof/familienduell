@@ -53,6 +53,8 @@ module PlayerInputs = {
   type props = {
     answer: FastMoney.Answer.t,
     update: FastMoney.Answer.t => unit,
+    revealText: FastMoney.Answer.t => unit,
+    revealCount: FastMoney.Answer.t => unit,
   }
 
   let make = props => {
@@ -65,11 +67,11 @@ module PlayerInputs = {
     }
 
     let revealText = () => {
-      props.update({...props.answer, textRevealed: true})
+      props.revealText({...props.answer, textRevealed: true})
     }
 
     let revealCount = () => {
-      props.update({...props.answer, countRevealed: true})
+      props.revealCount({...props.answer, countRevealed: true})
     }
 
     <>
@@ -102,26 +104,21 @@ type props = {
 
 let make = props => {
   let updateAnswer = (question, player, answer) => {
-    FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame->ignore
+    FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame
   }
 
-  /* let revealAnswer = answer => { */
-  /* FaceOff.revealAnswer(props.game, answer) */
-  /* ->props.updateGame */
-  /* ->Broadcaster.Reveal */
-  /* ->Broadcaster.sendEvent */
-  /* } */
+  let revealAnswerText = (question, player, answer) => {
+    updateAnswer(question, player, answer)
+    ->FastMoney
+    ->Broadcaster.RevealAnswerText
+    ->Broadcaster.sendEvent
+  }
 
-  /* let lockTeam = team => { */
-  /* FaceOff.lockTeam(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent */
+  let revealAnswerCount = (question, player, answer) => {
+    let update = updateAnswer(question, player, answer)
 
-  /* let _ = setTimeout(() => { */
-  /* FaceOff.unlockTeam(props.game, team) */
-  /* ->props.updateGame */
-  /* ->Broadcaster.Sync */
-  /* ->Broadcaster.sendEvent */
-  /* }, 1000) */
-  /* } */
+    Broadcaster.RevealAnswerCount(FastMoney(update), answer.count)->Broadcaster.sendEvent
+  }
 
   let points = FastMoney.getPoints(props.game)
 
@@ -146,16 +143,22 @@ let make = props => {
             <th> {question.text->React.string} </th>
             <Answers answers=question.answers />
             <PlayerInputs
-              answer=question.answerPlayer1 update={updateAnswer(question, FastMoney.Player1)}
+              answer=question.answerPlayer1
+              update={answer => updateAnswer(question, FastMoney.Player1, answer)->ignore}
+              revealText={revealAnswerText(question, FastMoney.Player1)}
+              revealCount={revealAnswerCount(question, FastMoney.Player1)}
             />
             <PlayerInputs
-              answer=question.answerPlayer2 update={updateAnswer(question, FastMoney.Player2)}
+              answer=question.answerPlayer2
+              update={answer => updateAnswer(question, FastMoney.Player2, answer)->ignore}
+              revealText={revealAnswerText(question, FastMoney.Player2)}
+              revealCount={revealAnswerCount(question, FastMoney.Player2)}
             />
           </tr>
         )
         ->React.array}
       </tbody>
     </table>
-    <div>{React.string(`Summe: ${Int.toString(points)}`)}</div>
+    <div> {React.string(`Summe: ${Int.toString(points)}`)} </div>
   </div>
 }
