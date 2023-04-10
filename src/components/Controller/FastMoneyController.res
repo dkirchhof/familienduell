@@ -32,7 +32,10 @@ module Styles = {
 }
 
 module Answers = {
-  type props = {answers: array<TestData.answer>}
+  type props = {
+    answers: array<TestData.answer>,
+    select: (FastMoney.player, TestData.answer) => unit,
+  }
 
   let make = props => {
     <td>
@@ -40,8 +43,12 @@ module Answers = {
       ->Array.mapWithIndex((answer, i) =>
         <div key={Int.toString(i)} className=Styles.answer>
           <span> {React.string(`${answer.text} (${Int.toString(answer.count)})`)} </span>
-          <button> {React.string("-> Spieler 1")} </button>
-          <button> {React.string("-> Spieler 2")} </button>
+          <button onClick={_ => props.select(Player1, answer)}>
+            {React.string("-> Spieler 1")}
+          </button>
+          <button onClick={_ => props.select(Player2, answer)}>
+            {React.string("-> Spieler 2")}
+          </button>
         </div>
       )
       ->React.array}
@@ -107,6 +114,17 @@ let make = props => {
     FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame
   }
 
+  let selectAnswer = (question, player, data: TestData.answer) => {
+    let oldAnswer = FastMoney.Question.getAnswer(question, player)
+    let newAnswer = {...oldAnswer, text: data.text, count: data.count}
+
+    if newAnswer.text === question.answerPlayer1.text {
+      Broadcaster.InvalidAnswer->Broadcaster.sendEvent
+    } else {
+      updateAnswer(question, player, newAnswer)->ignore
+    }
+  }
+
   let revealAnswerText = (question, player, answer) => {
     updateAnswer(question, player, answer)
     ->FastMoney
@@ -123,6 +141,7 @@ let make = props => {
   let points = FastMoney.getPoints(props.game)
 
   <div>
+    <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
     <table className=Styles.table>
       <thead>
         <tr>
@@ -141,24 +160,26 @@ let make = props => {
           <tr key={Int.toString(i)}>
             <th> {(i + 1)->Int.toString->React.string} </th>
             <th> {question.text->React.string} </th>
-            <Answers answers=question.answers />
+            <Answers
+              answers=question.answers
+              select={(player, data) => selectAnswer(question, player, data)}
+            />
             <PlayerInputs
               answer=question.answerPlayer1
-              update={answer => updateAnswer(question, FastMoney.Player1, answer)->ignore}
-              revealText={revealAnswerText(question, FastMoney.Player1)}
-              revealCount={revealAnswerCount(question, FastMoney.Player1)}
+              update={answer => updateAnswer(question, Player1, answer)->ignore}
+              revealText={revealAnswerText(question, Player1)}
+              revealCount={revealAnswerCount(question, Player1)}
             />
             <PlayerInputs
               answer=question.answerPlayer2
-              update={answer => updateAnswer(question, FastMoney.Player2, answer)->ignore}
-              revealText={revealAnswerText(question, FastMoney.Player2)}
-              revealCount={revealAnswerCount(question, FastMoney.Player2)}
+              update={answer => updateAnswer(question, Player2, answer)->ignore}
+              revealText={revealAnswerText(question, Player2)}
+              revealCount={revealAnswerCount(question, Player2)}
             />
           </tr>
         )
         ->React.array}
       </tbody>
     </table>
-    <div> {React.string(`Summe: ${Int.toString(points)}`)} </div>
   </div>
 }

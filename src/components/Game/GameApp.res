@@ -80,6 +80,7 @@ let make = () => {
       | Strike(game) =>
         updateGame(Game.FaceOff(game))
         AudioPlayer.play(#fail)
+      | InvalidAnswer => AudioPlayer.play(#fail2)
       }
     })
 

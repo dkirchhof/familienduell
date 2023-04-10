@@ -31,6 +31,13 @@ module Question = {
     answerPlayer2: Answer.make(),
   }
 
+  let getAnswer = (question, player) => {
+    switch player {
+    | Player1 => question.answerPlayer1
+    | Player2 => question.answerPlayer2
+    }
+  }
+
   let updateAnswer = (question, player, answer) => {
     switch player {
     | Player1 => {...question, answerPlayer1: answer}
