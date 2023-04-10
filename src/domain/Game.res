@@ -1,10 +1,13 @@
-type t = FaceOff(FaceOff.t) // | FastMoney(fastMoney)
+type t = FaceOff(FaceOff.t) | FastMoney(FastMoney.t)
 
 let make = questionIndex => {
   let numberOfAnswers = FaceOff.getNumberOfAnswers(Round1)
   let question = Question.make(TestData.questions[questionIndex]->Option.getExn, numberOfAnswers)
 
-  FaceOff.make(Round1, question)->FaceOff
+  /* FaceOff.make(question)->FaceOff */
+
+  let questions = TestData.questions
+  FastMoney.make(questions)->FastMoney
 }
 
 let nextRound = (game, questionIndex, winner: Team.choice) => {

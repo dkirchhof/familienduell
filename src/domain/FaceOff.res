@@ -2,8 +2,8 @@ type round = Round1 | Round2 | Round3 | Round4
 
 type t = {round: round, question: Question.t, points: int, team1: Team.t, team2: Team.t}
 
-let make = (round, question) => {
-  round,
+let make = (question) => {
+  round: Round1,
   question,
   points: 0,
   team1: Team.make(),

@@ -1,7 +1,7 @@
-type file = [#reveal | #fail]
+type sound = [#reveal | #fail]
 
-let play: file => unit = %raw(`
-  function (file) {
-    new Audio("/" + file + ".ogg").play();
+let play: sound => unit = %raw(`
+  function (sound) {
+    new Audio("/" + sound + ".ogg").play();
   }
 `)

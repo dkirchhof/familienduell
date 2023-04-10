@@ -7,6 +7,8 @@ let make = () => {
   React.useEffect0(() => {
     switch game {
     | FaceOff(faceOff) => Broadcaster.Sync(faceOff)->Broadcaster.sendEvent
+    /* | FastMoney(_) => panic("don't start with fast money") */
+    | FastMoney(_) => ()
     }
 
     None
@@ -16,6 +18,12 @@ let make = () => {
     faceOff->FaceOff->updateGame->ignore
 
     faceOff
+  }
+
+  let updateFastMoney = fastMoney => {
+    fastMoney->FastMoney->updateGame->ignore
+
+    fastMoney
   }
 
   let nextRound = winner => {
@@ -28,5 +36,6 @@ let make = () => {
 
   switch game {
   | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff nextRound />
+  | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
   }
 }

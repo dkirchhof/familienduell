@@ -37,7 +37,7 @@ let questions = [
     ],
   },
   {
-    text: "Nennen Sie eine Land",
+    text: "Nennen Sie ein Land",
     answers: [
       {text: "Deutschland", count: 70},
       {text: "Spanien", count: 12},
@@ -45,6 +45,17 @@ let questions = [
       {text: "Österreich", count: 3},
       {text: "Italien", count: 2},
       {text: "Portugal", count: 1},
+    ],
+  },
+  {
+    text: "Nennen Sie eine Filmreihe",
+    answers: [
+      {text: "Star Wars", count: 70},
+      {text: "Matrix", count: 12},
+      {text: "Der Herr der Ringe", count: 5},
+      {text: "Harry Potter", count: 3},
+      {text: "Planet der Affen", count: 2},
+      {text: "Der Pate", count: 1},
     ],
   },
 ]
