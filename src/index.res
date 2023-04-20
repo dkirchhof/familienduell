@@ -16,31 +16,56 @@ Emotion.injectGlobal(
     }
   }
 
+  @keyframes reveal-right-slow {
+    0%, 50% {
+      clip-path: inset(0% 100% 0% 0%);
+    }
+    100% {
+      clip-path: inset(0% 0% 0% 0%);
+    }
+  }
+
   ::view-transition-old(root) {
-    animation-delay: 1.5s;
-  }
-
-  ::view-transition-new(root) {
-    animation-delay: 1.5s;
-  }
-
-  ::view-transition-old(list), 
-  ::view-transition-old(answer-player-1-text), 
-  ::view-transition-old(answer-player-2-text) {
     animation: none;
   }
 
-  ::view-transition-new(list) {
+  ::view-transition-new(root) {
     mix-blend-mode: normal;
 
     animation: reveal-right 1.5s steps(30);
   }
 
-  ::view-transition-new(answer-player-1-text),
-  ::view-transition-new(answer-player-2-text) {
+  // ::view-transition-old(list), 
+  // ::view-transition-old(intro), 
+  // ::view-transition-old(answer-player-1-text), 
+  // ::view-transition-old(answer-player-2-text) {
+  //   animation: none;
+  // }
+
+  // ::view-transition-new(list), 
+  // ::view-transition-new(intro) {
+  //   mix-blend-mode: normal;
+
+  //   animation: reveal-right 1.5s steps(30);
+  // }
+
+  // ::view-transition-new(answer-player-1-text),
+  // ::view-transition-new(answer-player-2-text) {
+  //   mix-blend-mode: normal;
+
+  //   animation: reveal-right 0.75s steps(30);
+  // }
+
+  ::view-transition-old(footer) {
     mix-blend-mode: normal;
 
-    animation: reveal-right 0.75s steps(30);
+    animation: none;
+  }
+
+  ::view-transition-new(footer) {
+    mix-blend-mode: normal;
+
+    animation: reveal-right-slow 2s steps(30);
   }
 
   :root {

@@ -38,14 +38,6 @@ let boolToString = value =>
   | false => "Nein"
   }
 
-let roundToString = (value: FaceOff.round) =>
-  switch value {
-  | Round1 => "Runde 1"
-  | Round2 => "Runde 2"
-  | Round3 => "Runde 3"
-  | Round4 => "Runde 4"
-  }
-
 type props = {
   game: FaceOff.t,
   updateGame: FaceOff.t => FaceOff.t,
@@ -86,11 +78,11 @@ let make = props => {
   }
 
   let points = props.game.points
-  let x = FaceOff.getMultiplicator(props.game)
+  let x = (props.game.multiplicator :> int)
   let pointsX = FaceOff.getPointsWithMultiplicator(props.game)
 
   <div>
-    <div> {React.string(roundToString(props.game.round))} </div>
+    // <div> {React.string(roundToString(props.game.round))} </div>
     <div> {React.string(`Frage: ${props.game.question.text}`)} </div>
     <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
     <div> {React.string(`Punkte x${Int.toString(x)}: ${Int.toString(pointsX)}`)} </div>

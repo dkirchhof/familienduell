@@ -6,12 +6,14 @@ let questions = [
   {
     text: "Nennen Sie eine Farbe",
     answers: [
-      {text: "Blau", count: 46},
+      {text: "Blau", count: 35},
       {text: "Rot", count: 23},
       {text: "Grün", count: 20},
       {text: "Gelb", count: 6},
-      {text: "Schwarz", count: 3},
-      {text: "Hier steht eine lange Antwort", count: 2},
+      {text: "Schwarz", count: 4},
+      {text: "Türkis", count: 3},
+      {text: "Braun", count: 2},
+      {text: "Hier steht eine lange Antwort", count: 1},
     ],
   },
   {

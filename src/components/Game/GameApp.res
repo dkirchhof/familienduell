@@ -1,59 +1,37 @@
 @send external startViewTransition: (Dom.document, unit => unit) => unit = "startViewTransition"
 
 module Styles = {
-  open Emotion
-
   let globalStyle = `
-  :root {
-    position: fixed;
-    inset: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: ${Theme.Colors.get(#secondary)};
-    background: ${Theme.Colors.get(#primary)};
-
-    font-family: Ericsson, monospace;
-    font-size: 3rem;
-    line-height: 1.15;
-    text-transform: uppercase;
-  }
-  `
-
-  let display = css(`
-    position: relative;
-    width: 25rem;
-    height: 14rem;
-
-    ::after {
-      content: "";
-
-      position: absolute;
+    :root {
+      position: fixed;
       inset: 0;
-      pointer-events: none;
 
-      box-shadow: inset 0 3px 10px 2px black;
-    }
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    > * {
-      height: 100%;
+      color: ${Theme.Colors.get(#secondary)};
+      background: ${Theme.Colors.get(#primary)};
+
+      font-family: Ericsson, monospace;
+      font-size: 3rem;
+      line-height: 1.15;
+      text-transform: uppercase;
     }
-  `)
+  `
 }
 
 @react.component
 let make = () => {
-  let (game, setGame) = React.useState(_ => None)
+  let (game, setGame) = React.useState(_ => Game.Intro)
 
   let updateGame = game => {
-    setGame(_ => Some(game))
+    setGame(_ => game)
   }
 
   let updateGameAnimated = game => {
     startViewTransition(document, () => {
-      setGame(_ => Some(game))
+      setGame(_ => game)
     })
   }
 
@@ -62,7 +40,7 @@ let make = () => {
 
     Broadcaster.listen(event => {
       switch event {
-      | Sync(game) => updateGame(game)
+      | Sync(game) => updateGameAnimated(game)
       | RevealBoth(game) =>
         updateGameAnimated(game)
         AudioPlayer.play(#revealBoth)
@@ -88,20 +66,26 @@ let make = () => {
   })
 
   switch game {
-  | Some(FaceOff(faceOff)) =>
+  | Intro =>
     <>
-      <div className=Styles.display>
-        <FaceOffDisplay faceOff />
-      </div>
-      <Strikes team1=faceOff.team1 team2=faceOff.team2 />
-    </>
-  | Some(FastMoney(fastMoney)) =>
-    <>
-      <div className=Styles.display>
-        <FastMoneyDisplay fastMoney />
-      </div>
+      <Display>
+        <IntroDisplay />
+      </Display>
       <Strikes team1={Team.make()} team2={Team.make()} />
     </>
-  | None => React.null
+  | FaceOff(faceOff) =>
+    <>
+      <Display>
+        <FaceOffDisplay faceOff />
+      </Display>
+      <Strikes team1=faceOff.team1 team2=faceOff.team2 />
+    </>
+  | FastMoney(fastMoney) =>
+    <>
+      <Display>
+        <FastMoneyDisplay fastMoney />
+      </Display>
+      <Strikes team1={Team.make()} team2={Team.make()} />
+    </>
   }
 }
