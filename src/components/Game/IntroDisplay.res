@@ -11,7 +11,7 @@ module Styles = {
 @react.component
 let make = () => {
   <div className=Styles.intro>
-    <img src="/intro.png" />
-    <audio src="/intro.ogg" autoPlay=true />
+    <img src="/assets/images/intro.png" />
+    <audio src="/assets/sounds/intro.ogg" autoPlay=true />
   </div>
 }

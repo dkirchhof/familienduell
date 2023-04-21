@@ -86,6 +86,6 @@ let make = (props: props) => {
       <div> {props.faceOff->FaceOff.getPointsWithMultiplicator->Int.toString->React.string} </div>
       <div> {props.faceOff.team2.points->Int.toString->React.string} </div>
     </footer>
-    <audio src="/revealText.ogg" autoPlay=true />
+    <audio src="/assets/sounds/revealText.ogg" autoPlay=true />
   </div>
 }

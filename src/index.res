@@ -4,7 +4,7 @@ Emotion.injectGlobal(
   `
   @font-face {
     font-family: "Ericsson";
-    src: url("/ericsson.TTF") format("truetype");
+    src: url("/assets/fonts/ericsson.TTF") format("truetype");
   }
 
   @keyframes reveal-right {
