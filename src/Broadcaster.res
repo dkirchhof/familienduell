@@ -4,6 +4,7 @@ type data =
   | RevealAnswerText(Game.t)
   | RevealAnswerCount(Game.t, int)
   | Strike(FaceOff.t)
+  | EndRound(FaceOff.t)
   | InvalidAnswer
 
 type event = {data: data}

@@ -41,7 +41,7 @@ let boolToString = value =>
 type props = {
   game: FaceOff.t,
   updateGame: FaceOff.t => FaceOff.t,
-  nextRound: Team.choice => unit,
+  next: unit => unit,
 }
 
 let make = props => {
@@ -75,6 +75,13 @@ let make = props => {
 
   let addStrike = team => {
     FaceOff.addStrike(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent
+  }
+
+  let endRound = team => {
+    FaceOff.endRound(props.game, team)
+    ->props.updateGame
+    ->Broadcaster.EndRound
+    ->Broadcaster.sendEvent
   }
 
   let points = props.game.points
@@ -118,6 +125,9 @@ let make = props => {
           <td>
             <button onClick={_ => addStrike(Team1)}> {React.string("Strike hinzufügen")} </button>
           </td>
+          <td>
+            <button onClick={_ => endRound(Team1)}> {React.string("Punkte übertragen")} </button>
+          </td>
         </tr>
         <tr>
           <th> {React.string("Team 2")} </th>
@@ -130,14 +140,12 @@ let make = props => {
           <td>
             <button onClick={_ => addStrike(Team2)}> {React.string("Strike hinzufügen")} </button>
           </td>
+          <td>
+            <button onClick={_ => endRound(Team2)}> {React.string("Punkte übertragen")} </button>
+          </td>
         </tr>
       </tbody>
     </table>
-    <button onClick={_ => props.nextRound(Team1)}>
-      {React.string("Runde beenden -> Team 1")}
-    </button>
-    <button onClick={_ => props.nextRound(Team2)}>
-      {React.string("Runde beenden -> Team 2")}
-    </button>
+    <button onClick={_ => props.next()}> {React.string("Nächste Runde")} </button>
   </div>
 }

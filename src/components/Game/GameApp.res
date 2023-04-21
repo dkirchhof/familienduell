@@ -58,6 +58,9 @@ let make = () => {
       | Strike(game) =>
         updateGame(Game.FaceOff(game))
         AudioPlayer.play(#fail)
+      | EndRound(game) =>
+        updateGame(Game.FaceOff(game))
+        AudioPlayer.play(#revealCount)
       | InvalidAnswer => AudioPlayer.play(#fail2)
       }
     })
@@ -71,7 +74,14 @@ let make = () => {
       <Display>
         <IntroDisplay />
       </Display>
-      <Strikes team1={Team.make()} team2={Team.make()} />
+      <StrikesOff />
+    </>
+  | FaceOffIntro(faceOff) =>
+    <>
+      <Display>
+        <FaceOffIntroDisplay faceOff />
+      </Display>
+      <StrikesOff />
     </>
   | FaceOff(faceOff) =>
     <>
@@ -85,7 +95,7 @@ let make = () => {
       <Display>
         <FastMoneyDisplay fastMoney />
       </Display>
-      <Strikes team1={Team.make()} team2={Team.make()} />
+      <StrikesOff />
     </>
   }
 }

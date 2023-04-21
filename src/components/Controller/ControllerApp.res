@@ -9,17 +9,44 @@ let make = () => {
     let nextConfig = Config.config.games[gameIndex.current]->Option.getExn
 
     switch (game, nextConfig) {
-    | (Intro, FaceOff(faceOff)) => {
+    | (Intro, FaceOff(faceOffConfig)) => {
         let question = Question.make(
           TestData.questions[questionIndex.current]->Option.getExn,
-          faceOff.answers,
+          faceOffConfig.answers,
         )
 
-        FaceOff.make(question, faceOff.multiplicator)
-        ->FaceOff
-        ->updateGame
-        ->Broadcaster.Sync
-        ->Broadcaster.sendEvent
+        let nextGame = FaceOff.make(question, faceOffConfig.multiplicator)
+
+        nextGame->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+
+        setTimeout(() => {
+          nextGame->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+        }, 4000)->ignore
+
+        questionIndex.current = questionIndex.current + 1
+      }
+    | (FaceOff(prevFaceOff), FaceOff(faceOffConfig)) => {
+        Console.log("next")
+        let question = Question.make(
+          TestData.questions[questionIndex.current]->Option.getExn,
+          faceOffConfig.answers,
+        )
+
+        let nextGame = {
+          ...prevFaceOff,
+          question,
+          multiplicator: faceOffConfig.multiplicator,
+          team1: Team.makeWithPoints(prevFaceOff.team1.points),
+          team2: Team.makeWithPoints(prevFaceOff.team2.points),
+        }
+
+        nextGame->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+
+        setTimeout(() => {
+          nextGame->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+        }, 4000)->ignore
+
+        questionIndex.current = questionIndex.current + 1
       }
     | _ => panic("not implemented")
     }
@@ -45,19 +72,10 @@ let make = () => {
     fastMoney
   }
 
-  let nextRound = winner => {
-    // questionIndex.current = questionIndex.current + 1
-
-    // Game.nextRound(game, questionIndex.current, winner)
-    // ->updateGame
-    // ->Broadcaster.Sync
-    // ->Broadcaster.sendEvent
-    Obj.magic()
-  }
-
   switch game {
   | Intro => <IntroController next />
-  | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff nextRound />
+  | FaceOffIntro(_) => <FaceOffIntroController />
+  | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
   | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
   }
 }

@@ -47,3 +47,17 @@ let addStrike = (faceOff, team) =>
   | Team.Team1 => {...faceOff, team1: Team.addStrike(faceOff.team1)}
   | Team.Team2 => {...faceOff, team2: Team.addStrike(faceOff.team2)}
   }
+
+let endRound = (faceOff, winner) =>
+  switch winner {
+  | Team.Team1 => {
+      ...faceOff,
+      points: 0,
+      team1: Team.addPoints(faceOff.team1, getPointsWithMultiplicator(faceOff)),
+    }
+  | Team.Team2 => {
+      ...faceOff,
+      points: 0,
+      team2: Team.addPoints(faceOff.team2, getPointsWithMultiplicator(faceOff)),
+    }
+  }

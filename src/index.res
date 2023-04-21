@@ -16,15 +16,6 @@ Emotion.injectGlobal(
     }
   }
 
-  @keyframes reveal-right-slow {
-    0%, 50% {
-      clip-path: inset(0% 100% 0% 0%);
-    }
-    100% {
-      clip-path: inset(0% 0% 0% 0%);
-    }
-  }
-
   ::view-transition-old(root) {
     animation: none;
   }
@@ -55,18 +46,6 @@ Emotion.injectGlobal(
 
   //   animation: reveal-right 0.75s steps(30);
   // }
-
-  ::view-transition-old(footer) {
-    mix-blend-mode: normal;
-
-    animation: none;
-  }
-
-  ::view-transition-new(footer) {
-    mix-blend-mode: normal;
-
-    animation: reveal-right-slow 2s steps(30);
-  }
 
   :root {
     ${Theme.Colors.set(#primary, "#2D2D25")};
