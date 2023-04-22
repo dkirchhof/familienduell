@@ -90,6 +90,13 @@ let make = () => {
       </Display>
       <Strikes team1=faceOff.team1 team2=faceOff.team2 />
     </>
+  | FastMoneyIntro =>
+    <>
+      <Display>
+        <FastMoneyIntroDisplay />
+      </Display>
+      <StrikesOff />
+    </>
   | FastMoney(fastMoney) =>
     <>
       <Display>

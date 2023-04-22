@@ -9,7 +9,7 @@ let make = () => {
     let nextConfig = Config.config.games[gameIndex.current]->Option.getExn
 
     switch (game, nextConfig) {
-    | (Intro, FaceOff(faceOffConfig)) => {
+    | (Intro, FaceOffConfig(faceOffConfig)) => {
         let question = Question.make(
           TestData.questions[questionIndex.current]->Option.getExn,
           faceOffConfig.answers,
@@ -25,8 +25,7 @@ let make = () => {
 
         questionIndex.current = questionIndex.current + 1
       }
-    | (FaceOff(prevFaceOff), FaceOff(faceOffConfig)) => {
-        Console.log("next")
+    | (FaceOff(prevFaceOff), FaceOffConfig(faceOffConfig)) => {
         let question = Question.make(
           TestData.questions[questionIndex.current]->Option.getExn,
           faceOffConfig.answers,
@@ -47,6 +46,23 @@ let make = () => {
         }, 4000)->ignore
 
         questionIndex.current = questionIndex.current + 1
+      }
+    | (_, FastMoneyConfig(fastMoneyConfig)) => {
+        let nextGame =
+          TestData.questions
+          ->Array.slice(
+            ~start=questionIndex.current,
+            ~end=questionIndex.current + fastMoneyConfig.questions,
+          )
+          ->FastMoney.make
+
+        FastMoneyIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+
+        setTimeout(() => {
+          nextGame->FastMoney->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+        }, 4000)->ignore
+
+        questionIndex.current = questionIndex.current + fastMoneyConfig.questions
       }
     | _ => panic("not implemented")
     }
@@ -76,6 +92,7 @@ let make = () => {
   | Intro => <IntroController next />
   | FaceOffIntro(_) => <FaceOffIntroController />
   | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
+  | FastMoneyIntro => <FastMoneyIntroController />
   | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
   }
 }

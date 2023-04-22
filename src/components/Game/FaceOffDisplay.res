@@ -14,7 +14,7 @@ module Styles = {
     }
 
     > footer {
-      padding: 0 1.5rem;
+      padding: 0 1rem;
 
       display: grid;
       grid-template-columns: 4rem 1fr 4rem;

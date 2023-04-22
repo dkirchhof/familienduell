@@ -1,7 +1,7 @@
 @tag("type")
 type gameConfig =
-  | @as("faceOff") FaceOff({answers: int, multiplicator: [#1 | #2 | #3]})
-  | @as("fastMoney") FastMoney({questions: int})
+  | @as("faceOff") FaceOffConfig({answers: int, multiplicator: [#1 | #2 | #3]})
+  | @as("fastMoney") FastMoneyConfig({questions: int})
 
 type t = {
   games: array<gameConfig>

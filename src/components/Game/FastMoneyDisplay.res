@@ -16,7 +16,7 @@ module Styles = {
     }
 
     > footer {
-      padding: 0 1.5rem;
+      padding: 0 1rem;
 
       color: ${Theme.Colors.get(#primary)};
       background: ${Theme.Colors.get(#secondary)};

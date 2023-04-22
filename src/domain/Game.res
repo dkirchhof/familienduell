@@ -1,1 +1,1 @@
-type t = Intro | FaceOffIntro(FaceOff.t) | FaceOff(FaceOff.t) | FastMoney(FastMoney.t)
+type t = Intro | FaceOffIntro(FaceOff.t) | FaceOff(FaceOff.t) | FastMoneyIntro | FastMoney(FastMoney.t)
