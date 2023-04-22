@@ -13,7 +13,7 @@ let questions = [
       {text: "Schwarz", count: 4},
       {text: "Türkis", count: 3},
       {text: "Braun", count: 2},
-      {text: "Hier steht eine lange Antwort", count: 1},
+      {text: "Hier steht eine sehr lange Antwort", count: 1},
     ],
   },
   {

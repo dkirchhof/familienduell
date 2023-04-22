@@ -67,7 +67,10 @@ let make = (props: props) => {
       <ol className=Styles.list>
         {props.faceOff.question.answers
         ->Array.mapWithIndex((answer, i) => {
-          let text = answer.revealed ? String.padEnd(answer.text, 31, "_") : String.repeat("_", 31)
+          let text = answer.revealed
+            ? answer.text->String.slice(~start=0, ~end=31)->String.padEnd(31, "_")
+            : String.repeat("_", 31)
+
           let pointsText = answer.revealed ? Int.toString(answer.count) : "--"
 
           <li key={Int.toString(i)} className=Styles.answer>
