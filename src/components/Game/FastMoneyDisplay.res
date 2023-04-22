@@ -74,7 +74,7 @@ module AnswerTexts = {
           if answer.text === "" {
             "-----"
           } else {
-            answer.text
+            String.slice(answer.text, ~start=0, ~end=15)
           }
         } else {
           String.repeat("_", 15)
