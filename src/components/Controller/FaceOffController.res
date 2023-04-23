@@ -19,17 +19,6 @@ module Styles = {
       border: 1px solid;
     }
   `)
-
-  let teamActions = css(`
-    border-collapse: collapse;
-    border: 1px solid;
-
-    td {
-      padding: 0.5rem;
-
-      border: 1px solid;
-    }
-  `)
 }
 
 let boolToString = value =>
@@ -113,32 +102,44 @@ let make = props => {
       </tbody>
     </table>
     <table className=Styles.table>
-      <tbody>
+      <thead>
         <tr>
           <th> {React.string("Team 1")} </th>
+          <th> {React.string("Team 2")} </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
           <td> {React.string(`Punkte: ${Int.toString(props.game.team1.points)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(props.game.team2.points)}`)} </td>
+        </tr>
+        <tr>
           <td> {React.string(`Gesperrt: ${boolToString(props.game.team1.locked)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(props.game.team2.locked)}`)} </td>
+        </tr>
+        <tr>
           <td> {React.string(`Strikes: ${Int.toString(props.game.team1.strikes)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(props.game.team2.strikes)}`)} </td>
+        </tr>
+        <tr>
           <td>
             <button onClick={_ => lockTeam(Team1)}> {React.string("Sperren")} </button>
           </td>
           <td>
-            <button onClick={_ => addStrike(Team1)}> {React.string("Strike hinzufügen")} </button>
-          </td>
-          <td>
-            <button onClick={_ => endRound(Team1)}> {React.string("Punkte übertragen")} </button>
+            <button onClick={_ => lockTeam(Team2)}> {React.string("Sperren")} </button>
           </td>
         </tr>
         <tr>
-          <th> {React.string("Team 2")} </th>
-          <td> {React.string(`Punkte: ${Int.toString(props.game.team2.points)}`)} </td>
-          <td> {React.string(`Gesperrt: ${boolToString(props.game.team2.locked)}`)} </td>
-          <td> {React.string(`Strikes: ${Int.toString(props.game.team2.strikes)}`)} </td>
           <td>
-            <button onClick={_ => lockTeam(Team2)}> {React.string("Sperren")} </button>
+            <button onClick={_ => addStrike(Team1)}> {React.string("Strike hinzufügen")} </button>
           </td>
           <td>
             <button onClick={_ => addStrike(Team2)}> {React.string("Strike hinzufügen")} </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick={_ => endRound(Team1)}> {React.string("Punkte übertragen")} </button>
           </td>
           <td>
             <button onClick={_ => endRound(Team2)}> {React.string("Punkte übertragen")} </button>
