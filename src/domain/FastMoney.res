@@ -49,7 +49,7 @@ module Question = {
 type t = {questions: array<Question.t>}
 
 let make = questions => {
-  questions: Array.map(questions, Question.make),
+  questions: questions
 }
 
 let updateAnswer = (game, question, player, answer) => {

@@ -1,73 +1,45 @@
 @react.component
 let make = () => {
+  let games = Config.load(0)
   let gameIndex = React.useRef(0)
-  let questionIndex = React.useRef(0)
 
   let (game, updateGame) = SimpleState.use(Game.Intro)
 
   let next = () => {
-    let nextConfig = Config.config.games[gameIndex.current]->Option.getExn
+    let nextGame = games[gameIndex.current]->Option.getExn
 
-    switch (game, nextConfig) {
-    | (Intro, FaceOffConfig(faceOffConfig)) => {
-        let question = Question.make(
-          TestData.questions[questionIndex.current]->Option.getExn,
-          faceOffConfig.answers,
-        )
-
-        let nextGame = FaceOff.make(question, faceOffConfig.multiplicator)
-
-        nextGame->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+    switch (game, nextGame) {
+    | (Intro, FaceOff(faceOff)) => {
+        faceOff->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
 
         setTimeout(() => {
-          nextGame->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+          faceOff->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
         }, 4000)->ignore
-
-        questionIndex.current = questionIndex.current + 1
       }
-    | (FaceOff(prevFaceOff), FaceOffConfig(faceOffConfig)) => {
-        let question = Question.make(
-          TestData.questions[questionIndex.current]->Option.getExn,
-          faceOffConfig.answers,
-        )
-
-        let nextGame = {
-          ...prevFaceOff,
-          question,
-          multiplicator: faceOffConfig.multiplicator,
+    | (FaceOff(prevFaceOff), FaceOff(nextFaceOff)) => {
+        let nextFaceOff' = {
+          ...nextFaceOff,
           team1: Team.makeWithPoints(prevFaceOff.team1.points),
           team2: Team.makeWithPoints(prevFaceOff.team2.points),
         }
 
-        nextGame->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+        nextFaceOff'->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
 
         setTimeout(() => {
-          nextGame->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+          nextFaceOff'->FaceOff->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
         }, 4000)->ignore
-
-        questionIndex.current = questionIndex.current + 1
       }
-    | (_, FastMoneyConfig(fastMoneyConfig)) => {
-        let nextGame =
-          TestData.questions
-          ->Array.slice(
-            ~start=questionIndex.current,
-            ~end=questionIndex.current + fastMoneyConfig.questions,
-          )
-          ->FastMoney.make
-
+    | (_, FastMoney(nextFastMoney)) => {
         FastMoneyIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
 
         setTimeout(() => {
-          nextGame->FastMoney->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+          nextFastMoney->FastMoney->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
         }, 4000)->ignore
-
-        questionIndex.current = questionIndex.current + fastMoneyConfig.questions
       }
     | _ => panic("not implemented")
     }
 
-    gameIndex.current = mod(gameIndex.current + 1, Array.length(Config.config.games))
+    gameIndex.current = mod(gameIndex.current + 1, Array.length(games))
   }
 
   React.useEffect0(() => {
