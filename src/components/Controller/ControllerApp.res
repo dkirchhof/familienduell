@@ -1,6 +1,6 @@
 @react.component
 let make = () => {
-  let games = Config.load(0)
+  let games = Config.load()
   let gameIndex = React.useRef(0)
 
   let (game, updateGame) = SimpleState.use(Game.Intro)

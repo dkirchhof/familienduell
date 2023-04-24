@@ -33,8 +33,8 @@ module Styles = {
 
 module Answers = {
   type props = {
-    answers: array<TestData.answer>,
-    select: (FastMoney.player, TestData.answer) => unit,
+    answers: array<(string, int)>,
+    select: (FastMoney.player, (string, int)) => unit,
   }
 
   let make = props => {
@@ -42,7 +42,7 @@ module Answers = {
       {props.answers
       ->Array.mapWithIndex((answer, i) =>
         <div key={Int.toString(i)} className=Styles.answer>
-          <span> {React.string(`${answer.text} (${Int.toString(answer.count)})`)} </span>
+          <span> {React.string(`${fst(answer)} (${Int.toString(snd(answer))})`)} </span>
           <button onClick={_ => props.select(Player1, answer)}>
             {React.string("-> Spieler 1")}
           </button>
@@ -114,9 +114,9 @@ let make = props => {
     FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame
   }
 
-  let selectAnswer = (question, player, data: TestData.answer) => {
+  let selectAnswer = (question, player, data) => {
     let oldAnswer = FastMoney.Question.getAnswer(question, player)
-    let newAnswer = {...oldAnswer, text: data.text, count: data.count}
+    let newAnswer = {...oldAnswer, text: fst(data), count: snd(data)}
 
     if newAnswer.text === question.answerPlayer1.text {
       Broadcaster.InvalidAnswer->Broadcaster.sendEvent

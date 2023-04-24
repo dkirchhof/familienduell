@@ -6,7 +6,7 @@ module Answer = {
   }
 
   let make = (text, count) => {
-    text,
+    text: StringUtils.replaceAll(text, "ß", "ss"),
     count,
     revealed: false,
   }
@@ -20,11 +20,11 @@ module Question = {
     answers: array<Answer.t>,
   }
 
-  let make = (data: TestData.question, numberOfAnswers) => {
-    text: data.text,
-    answers: data.answers
+  let make = (question: string, answers: array<(string, int)>, numberOfAnswers) => {
+    text: question,
+    answers: answers
     ->Array.slice(~start=0, ~end=numberOfAnswers)
-    ->Array.map(a => Answer.make(a.text, a.count)),
+    ->Array.map(((text, count)) => Answer.make(text, count)),
   }
 
   let revealAnswer = (question, answer) => {

@@ -3,14 +3,25 @@ type gameConfig =
   | @as("faceOff") FaceOffConfig({answers: int, multiplicator: [#1 | #2 | #3]})
   | @as("fastMoney") FastMoneyConfig({questions: int})
 
-type t = {games: array<gameConfig>}
+type rawQuestion = {text: string, answers: array<(string, int)>}
 
-let load = (firstQuestionIndex: int) => {
+type t = {
+  @as("firstQuestion") firstQuestionIndex: int,
+  @as("games") gameConfigs: array<gameConfig>,
+  questions: array<rawQuestion>,
+}
+
+let load = () => {
+  let config: t = %raw(`window.config`)
+
   let rec mapConfig = (configs, questionIndex, games) => {
     switch configs[0] {
     | Some(FaceOffConfig(faceOffConfig)) => {
+        let rawQuestion = config.questions[questionIndex]->Option.getExn
+
         let question = FaceOff.Question.make(
-          TestData.questions[questionIndex]->Option.getExn,
+          rawQuestion.text,
+          rawQuestion.answers,
           faceOffConfig.answers,
         )
 
@@ -25,9 +36,9 @@ let load = (firstQuestionIndex: int) => {
 
     | Some(FastMoneyConfig(fastMoneyConfig)) => {
         let questions =
-          TestData.questions
+          config.questions
           ->Array.slice(~start=questionIndex, ~end=questionIndex + fastMoneyConfig.questions)
-          ->Array.map(FastMoney.Question.make)
+          ->Array.map(rawQuestion => FastMoney.Question.make(rawQuestion.text, rawQuestion.answers))
 
         let game = FastMoney.make(questions)->Game.FastMoney
 
@@ -41,5 +52,5 @@ let load = (firstQuestionIndex: int) => {
     }
   }
 
-  mapConfig(%raw(`window.config.games`), firstQuestionIndex, [])
+  mapConfig(config.gameConfigs, config.firstQuestionIndex, [])
 }

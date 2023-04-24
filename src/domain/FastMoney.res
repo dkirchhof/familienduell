@@ -19,14 +19,14 @@ module Answer = {
 module Question = {
   type t = {
     text: string,
-    answers: array<TestData.answer>,
+    answers: array<(string, int)>,
     answerPlayer1: Answer.t,
     answerPlayer2: Answer.t,
   }
 
-  let make = (data: TestData.question) => {
-    text: data.text,
-    answers: data.answers,
+  let make = (question: string, answers: array<(string, int)>) => {
+    text: question, 
+    answers,
     answerPlayer1: Answer.make(),
     answerPlayer2: Answer.make(),
   }
