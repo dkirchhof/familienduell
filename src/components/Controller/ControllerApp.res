@@ -1,12 +1,12 @@
 @react.component
 let make = () => {
   let games = Config.load()
-  let gameIndex = React.useRef(0)
 
+  let (gameIndex, updateGameIndex) = SimpleState.use(0)
   let (game, updateGame) = SimpleState.use(Game.Intro)
 
   let next = () => {
-    let nextGame = games[gameIndex.current]->Option.getExn
+    let nextGame = games[gameIndex]->Option.getExn
 
     switch (game, nextGame) {
     | (Intro, FaceOff(faceOff)) => {
@@ -39,7 +39,7 @@ let make = () => {
     | _ => panic("not implemented")
     }
 
-    gameIndex.current = mod(gameIndex.current + 1, Array.length(games))
+    let _ = updateGameIndex(gameIndex + 1)
   }
 
   React.useEffect0(() => {
@@ -60,11 +60,16 @@ let make = () => {
     fastMoney
   }
 
-  switch game {
-  | Intro => <IntroController next />
-  | FaceOffIntro(_) => <FaceOffIntroController />
-  | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
-  | FastMoneyIntro => <FastMoneyIntroController />
-  | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
-  }
+  <>
+    <div>
+      {React.string(`Spiel ${gameIndex->Int.toString} von ${games->Array.length->Int.toString}`)}
+    </div>
+    {switch game {
+    | Intro => <IntroController next />
+    | FaceOffIntro(_) => <FaceOffIntroController />
+    | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
+    | FastMoneyIntro => <FastMoneyIntroController />
+    | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
+    }}
+  </>
 }
