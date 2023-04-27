@@ -62,6 +62,12 @@ let make = () => {
         updateGame(Game.FaceOff(game))
         AudioPlayer.play(#revealCount)
       | InvalidAnswer => AudioPlayer.play(#fail2)
+      | UpdateTimer(game, time) => 
+        updateGameAnimated(Game.FastMoney(game))
+
+        if time <= 0 {
+          AudioPlayer.play(#timerEnd)
+        }
       }
     })
 

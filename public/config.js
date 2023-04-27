@@ -1,11 +1,11 @@
 window.config = {
   firstQuestion: 0,
   games: [
-    { type: "faceOff", answers: 8, multiplicator: 1 },
-    { type: "faceOff", answers: 7, multiplicator: 1 },
+    // { type: "faceOff", answers: 8, multiplicator: 1 },
+    // { type: "faceOff", answers: 7, multiplicator: 1 },
     // { type: "faceOff", answers: 6, multiplicator: 2 },
     // { type: "faceOff", answers: 5, multiplicator: 3 },
-    { type: "fastMoney", questions: 5 },
+    { type: "fastMoney", questions: 5, timePlayer1: 20, timePlayer2: 25 },
   ],
   questions: [
     {

@@ -2,8 +2,8 @@
 let make = () => {
   let games = Config.load()
 
-  let (gameIndex, updateGameIndex) = SimpleState.use(0)
-  let (game, updateGame) = SimpleState.use(Game.Intro)
+  let (gameIndex, updateGameIndex, _) = SimpleState.use(0)
+  let (game, updateGame, setGame) = SimpleState.use(Game.Intro)
 
   let next = () => {
     let nextGame = games[gameIndex]->Option.getExn
@@ -60,6 +60,22 @@ let make = () => {
     fastMoney
   }
 
+  let updateTimer = (player, timer) => {
+    setGame(game => {
+      let updatedGame = switch (game, player) {
+      | (FastMoney(fastMoney), FastMoney.Player1) =>
+        FastMoney.updateTimer(fastMoney, Player1, timer)
+      | (FastMoney(fastMoney), FastMoney.Player2) =>
+        FastMoney.updateTimer(fastMoney, Player2, timer)
+      | _ => panic("invalid state transition")
+      }
+
+      Broadcaster.UpdateTimer(updatedGame, FastMoney.Timer.getTime(timer))->Broadcaster.sendEvent
+
+      FastMoney(updatedGame)
+    })
+  }
+
   <>
     <div>
       {React.string(`Spiel ${gameIndex->Int.toString} von ${games->Array.length->Int.toString}`)}
@@ -69,7 +85,7 @@ let make = () => {
     | FaceOffIntro(_) => <FaceOffIntroController />
     | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
     | FastMoneyIntro => <FastMoneyIntroController />
-    | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney />
+    | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney updateTimer/>
     }}
   </>
 }

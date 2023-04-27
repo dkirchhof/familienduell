@@ -1,7 +1,7 @@
 @tag("type")
 type gameConfig =
   | @as("faceOff") FaceOffConfig({answers: int, multiplicator: [#1 | #2 | #3]})
-  | @as("fastMoney") FastMoneyConfig({questions: int})
+  | @as("fastMoney") FastMoneyConfig({questions: int, timePlayer1: int, timePlayer2: int})
 
 type rawQuestion = {text: string, answers: array<(string, int)>}
 
@@ -40,7 +40,12 @@ let load = () => {
           ->Array.slice(~start=questionIndex, ~end=questionIndex + fastMoneyConfig.questions)
           ->Array.map(rawQuestion => FastMoney.Question.make(rawQuestion.text, rawQuestion.answers))
 
-        let game = FastMoney.make(questions)->Game.FastMoney
+        let game =
+          FastMoney.make(
+            questions,
+            fastMoneyConfig.timePlayer1,
+            fastMoneyConfig.timePlayer2,
+          )->Game.FastMoney
 
         mapConfig(
           Array.sliceToEnd(configs, ~start=1),

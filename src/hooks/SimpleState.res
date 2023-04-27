@@ -7,5 +7,5 @@ let use = value => {
     newValue
   }
   
-  (state, update)
+  (state, update, setState)
 }

@@ -6,6 +6,7 @@ type data =
   | Strike(FaceOff.t)
   | EndRound(FaceOff.t)
   | InvalidAnswer
+  | UpdateTimer(FastMoney.t, int)
 
 type event = {data: data}
 

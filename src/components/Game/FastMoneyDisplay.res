@@ -18,11 +18,17 @@ module Styles = {
     > footer {
       padding: 0 1rem;
 
+      display: grid;
+      grid-template-columns: 4rem 1fr 4rem;
+
       color: ${Theme.Colors.get(#primary)};
       background: ${Theme.Colors.get(#secondary)};
 
       font-size: 1.5rem;
-      text-align: center;
+
+      > div {
+        text-align: center;
+      }
     }
   `,
   )
@@ -136,6 +142,20 @@ let make = (props: props) => {
         getAnswer={q => q.answerPlayer2}
       />
     </main>
-    <footer> {sum->Int.toString->React.string} </footer>
+    <footer>
+      <div>
+        {switch props.fastMoney.timerPlayer1 {
+        | Visible(time) => time->Int.toString->React.string
+        | Hidden(_) => React.null
+        }}
+      </div>
+      <div> {sum->Int.toString->React.string} </div>
+      <div>
+        {switch props.fastMoney.timerPlayer2 {
+        | Visible(time) => time->Int.toString->React.string
+        | Hidden(_) => React.null
+        }}
+      </div>
+    </footer>
   </div>
 }

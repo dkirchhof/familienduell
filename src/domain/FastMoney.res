@@ -1,5 +1,14 @@
 type player = Player1 | Player2
 
+module Timer = {
+  type t = Hidden(int) | Visible(int)
+
+  let getTime = timer =>
+    switch timer {
+    | Hidden(time) | Visible(time) => time
+    }
+}
+
 module Answer = {
   type t = {
     text: string,
@@ -25,7 +34,7 @@ module Question = {
   }
 
   let make = (question: string, answers: array<(string, int)>) => {
-    text: question, 
+    text: question,
     answers,
     answerPlayer1: Answer.make(),
     answerPlayer2: Answer.make(),
@@ -46,13 +55,20 @@ module Question = {
   }
 }
 
-type t = {questions: array<Question.t>}
+type t = {
+  questions: array<Question.t>,
+  timerPlayer1: Timer.t,
+  timerPlayer2: Timer.t,
+}
 
-let make = questions => {
-  questions: questions
+let make = (questions, timePlayer1, timePlayer2) => {
+  questions,
+  timerPlayer1: Hidden(timePlayer1),
+  timerPlayer2: Hidden(timePlayer2),
 }
 
 let updateAnswer = (game, question, player, answer) => {
+  ...game,
   questions: Array.map(game.questions, q => {
     if q === question {
       Question.updateAnswer(q, player, answer)
@@ -69,4 +85,18 @@ let getPoints = game => {
 
     acc + a1 + a2
   })
+}
+
+let getTimer = (game, player) => {
+  switch player {
+  | Player1 => game.timerPlayer1
+  | Player2 => game.timerPlayer2
+  }
+}
+
+let updateTimer = (game, player, timer) => {
+  switch player {
+  | Player1 => {...game, timerPlayer1: timer}
+  | Player2 => {...game, timerPlayer2: timer}
+  }
 }

@@ -18,6 +18,12 @@ module Styles = {
     }
   `)
 
+  let timer = css(`
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  `)
+
   let answer = css(`
     display: grid;
     grid-template-columns: 1fr auto auto;
@@ -107,9 +113,27 @@ module PlayerInputs = {
 type props = {
   game: FastMoney.t,
   updateGame: FastMoney.t => FastMoney.t,
+  updateTimer: (FastMoney.player, FastMoney.Timer.t) => unit,
 }
 
 let make = props => {
+  let startTimer = player => {
+    let interval = ref(Obj.magic())
+    let time = FastMoney.getTimer(props.game, player)->FastMoney.Timer.getTime->ref
+
+    props.updateTimer(player, FastMoney.Timer.Visible(time.contents))
+
+    interval := setInterval(() => {
+        time := time.contents - 1
+
+        props.updateTimer(player, FastMoney.Timer.Visible(time.contents))
+
+        if time.contents === 0 {
+          clearInterval(interval.contents)
+        }
+      }, 1000)
+  }
+
   let updateAnswer = (question, player, answer) => {
     FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame
   }
@@ -133,15 +157,31 @@ let make = props => {
   }
 
   let revealAnswerCount = (question, player, answer) => {
-    let update = updateAnswer(question, player, answer)
+    let updated = updateAnswer(question, player, answer)
 
-    Broadcaster.RevealAnswerCount(FastMoney(update), answer.count)->Broadcaster.sendEvent
+    Broadcaster.RevealAnswerCount(FastMoney(updated), answer.count)->Broadcaster.sendEvent
   }
 
   let points = FastMoney.getPoints(props.game)
 
-  <div>
+  <>
     <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
+    <div className=Styles.timer>
+      {switch props.game.timerPlayer1 {
+      | Hidden(time) =>
+        <button onClick={_ => startTimer(Player1)}>
+          {React.string(`Timer Spieler 1 starten (${Int.toString(time)})`)}
+        </button>
+      | Visible(time) => <span> {React.string(`Timer Spieler 1: ${Int.toString(time)}`)} </span>
+      }}
+      {switch props.game.timerPlayer2 {
+      | Hidden(time) =>
+        <button onClick={_ => startTimer(Player2)}>
+          {React.string(`Timer Spieler 2 starten (${Int.toString(time)})`)}
+        </button>
+      | Visible(time) => <span> {React.string(`Timer Spieler 2: ${Int.toString(time)}`)} </span>
+      }}
+    </div>
     <table className=Styles.table>
       <thead>
         <tr>
@@ -181,5 +221,5 @@ let make = props => {
         ->React.array}
       </tbody>
     </table>
-  </div>
+  </>
 }
