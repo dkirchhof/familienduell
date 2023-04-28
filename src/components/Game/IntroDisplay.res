@@ -7,6 +7,7 @@ module Styles = {
     justify-content: center;
 
     padding: 1rem;
+    box-sizing: border-box;
 
     font-size: 2rem;
     text-align: center;
