@@ -1,15 +1,15 @@
 @react.component
 let make = () => {
-  let games = Config.load()
+  let config = Config.load()
 
   let (gameIndex, updateGameIndex, _) = SimpleState.use(0)
-  let (game, updateGame, setGame) = SimpleState.use(Game.Intro)
+  let (game, updateGame, setGame) = SimpleState.use(Game.Intro(config.name))
 
   let next = () => {
-    let nextGame = games[gameIndex]->Option.getExn
+    let nextGame = config.games[gameIndex]->Option.getExn
 
     switch (game, nextGame) {
-    | (Intro, FaceOff(faceOff)) => {
+    | (Intro(_), FaceOff(faceOff)) => {
         faceOff->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
 
         setTimeout(() => {
@@ -78,10 +78,10 @@ let make = () => {
 
   <>
     <div>
-      {React.string(`Spiel ${gameIndex->Int.toString} von ${games->Array.length->Int.toString}`)}
+      {React.string(`Spiel ${gameIndex->Int.toString} von ${config.games->Array.length->Int.toString}`)}
     </div>
     {switch game {
-    | Intro => <IntroController next />
+    | Intro(_) => <IntroController next />
     | FaceOffIntro(_) => <FaceOffIntroController />
     | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
     | FastMoneyIntro => <FastMoneyIntroController />

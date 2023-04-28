@@ -23,7 +23,7 @@ module Styles = {
 
 @react.component
 let make = () => {
-  let (game, setGame) = React.useState(_ => Game.Intro)
+  let (game, setGame) = React.useState(_ => Game.Intro(""))
 
   let updateGame = game => {
     setGame(_ => game)
@@ -75,10 +75,10 @@ let make = () => {
   })
 
   switch game {
-  | Intro =>
+  | Intro(name) =>
     <>
       <Display>
-        <IntroDisplay />
+        <IntroDisplay name />
       </Display>
       <StrikesOff />
     </>

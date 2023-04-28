@@ -5,13 +5,19 @@ module Styles = {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    padding: 1rem;
+
+    font-size: 2rem;
+    text-align: center;
   `)
 }
 
-@react.component
-let make = () => {
+type props = {name: string}
+
+let make = props => {
   <div className=Styles.intro>
-    <img src="/assets/images/intro.png" />
+    {React.string(props.name)}
     <audio src="/assets/sounds/intro.ogg" autoPlay=true />
   </div>
 }
