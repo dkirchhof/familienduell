@@ -3,7 +3,9 @@ node_modules/
 
 bundle.js
 bundle.js.map
+bundle.min.js
 
 *.mjs
 
 !esbuild.mjs
+!esbuild.prod.mjs

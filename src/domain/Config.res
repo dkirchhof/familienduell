@@ -17,13 +17,51 @@ type t = {
   games: array<Game.t>,
 }
 
-let load = () => {
-  let config: raw = %raw(`window.config`)
+let exampleConfig = JSON.stringifyAnyWithIndent(
+  {
+    name: "Familienduell",
+    firstQuestionIndex: 0,
+    gameConfigs: [
+      FaceOffConfig({answers: 8, multiplicator: #1}),
+      FastMoneyConfig({questions: 5, timePlayer1: 20, timePlayer2: 25}),
+    ],
+    questions: [
+      {
+        text: "Nennen Sie eine Farbe",
+        answers: [
+          ("Blau", 35),
+          ("Rot", 23),
+          ("Grün", 20),
+          ("Gelb", 6),
+          ("Schwarz", 4),
+          ("Türkis", 3),
+          ("Braun", 2),
+          ("Hier steht eine sehr lange Antwort", 1),
+        ],
+      },
+      {
+        text: "Nennen Sie eine Zahl",
+        answers: [
+          ("Achtzig", 80),
+          ("Neun", 9),
+          ("Eins", 4),
+          ("Null", 3),
+          ("Sieben", 2),
+          ("Neunundsechzig", 1),
+        ],
+      },
+    ],
+  },
+  2,
+)->Option.getExn
+
+let parse = (json: string) => {
+  let rawConfig = json->JSON.parseExn->Obj.magic
 
   let rec mapGameConfig = (configs, questionIndex, games) => {
     switch configs[0] {
     | Some(FaceOffConfig(faceOffConfig)) => {
-        let rawQuestion = config.questions[questionIndex]->Option.getExn
+        let rawQuestion = rawConfig.questions[questionIndex]->Option.getExn
 
         let question = FaceOff.Question.make(
           rawQuestion.text,
@@ -42,7 +80,7 @@ let load = () => {
 
     | Some(FastMoneyConfig(fastMoneyConfig)) => {
         let questions =
-          config.questions
+          rawConfig.questions
           ->Array.slice(~start=questionIndex, ~end=questionIndex + fastMoneyConfig.questions)
           ->Array.map(rawQuestion => FastMoney.Question.make(rawQuestion.text, rawQuestion.answers))
 
@@ -64,7 +102,7 @@ let load = () => {
   }
 
   {
-    name: config.name,
-    games: mapGameConfig(config.gameConfigs, config.firstQuestionIndex, []),
+    name: rawConfig.name,
+    games: mapGameConfig(rawConfig.gameConfigs, rawConfig.firstQuestionIndex, []),
   }
 }

@@ -1,12 +1,11 @@
-@react.component
-let make = () => {
-  let config = Config.load()
+type props = {config: Config.t}
 
+let make = props => {
   let (gameIndex, updateGameIndex, _) = SimpleState.use(0)
-  let (game, updateGame, setGame) = SimpleState.use(Game.Intro(config.name))
+  let (game, updateGame, setGame) = SimpleState.use(Game.Intro(props.config.name))
 
   let next = () => {
-    let nextGame = config.games[gameIndex]->Option.getExn
+    let nextGame = props.config.games[gameIndex]->Option.getExn
 
     switch (game, nextGame) {
     | (Intro(_), FaceOff(faceOff)) => {
@@ -78,7 +77,7 @@ let make = () => {
 
   <>
     <div>
-      {React.string(`Spiel ${gameIndex->Int.toString} von ${config.games->Array.length->Int.toString}`)}
+      {React.string(`Spiel ${gameIndex->Int.toString} von ${props.config.games->Array.length->Int.toString}`)}
     </div>
     {switch game {
     | Intro(_) => <IntroController next />
