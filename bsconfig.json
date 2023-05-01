@@ -14,7 +14,8 @@
     ],
     "bs-dependencies": [
         "@rescript/core",
-        "@rescript/react"
+        "@rescript/react",
+        "rescript-struct"
     ],
     "suffix": ".mjs",
     "jsx": {

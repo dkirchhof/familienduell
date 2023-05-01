@@ -55,54 +55,115 @@ let exampleConfig = JSON.stringifyAnyWithIndent(
   2,
 )->Option.getExn
 
-let parse = (json: string) => {
-  let rawConfig = json->JSON.parseExn->Obj.magic
+let parseJson = (json: string) => {
+  open RescriptStruct
 
-  let rec mapGameConfig = (configs, questionIndex, games) => {
-    switch configs[0] {
-    | Some(FaceOffConfig(faceOffConfig)) => {
-        let rawQuestion = rawConfig.questions[questionIndex]->Option.getExn
+  let codec = S.object(o => {
+    name: S.field(o, "name", S.string()),
+    firstQuestionIndex: S.field(o, "firstQuestionIndex", S.int()),
+    gameConfigs: S.field(
+      o,
+      "gameConfigs",
+      S.array(
+        S.union([
+          S.object(o => {
+            S.field(o, "type", S.literal(String("faceOff")))->ignore
 
-        let question = FaceOff.Question.make(
-          rawQuestion.text,
-          rawQuestion.answers,
-          faceOffConfig.answers,
-        )
+            FaceOffConfig({
+              answers: S.field(o, "answers", S.int()),
+              multiplicator: S.field(
+                o,
+                "multiplicator",
+                S.union([
+                  S.literalVariant(Int(1), #1),
+                  S.literalVariant(Int(2), #2),
+                  S.literalVariant(Int(3), #3),
+                ]),
+              ),
+            })
+          }),
+          S.object(o => {
+            S.field(o, "type", S.literal(String("fastMoney")))->ignore
 
-        let game = FaceOff.make(question, faceOffConfig.multiplicator)->Game.FaceOff
+            FastMoneyConfig({
+              questions: S.field(o, "questions", S.int()),
+              timePlayer1: S.field(o, "timePlayer1", S.int()),
+              timePlayer2: S.field(o, "timePlayer2", S.int()),
+            })
+          }),
+        ]),
+      ),
+    ),
+    questions: S.field(
+      o,
+      "questions",
+      S.array(
+        S.object(o => {
+          text: S.field(o, "text", S.string()),
+          answers: S.field(o, "answers", S.array(S.tuple2(S.string(), S.int()))),
+        }),
+      ),
+    ),
+  })
+  
+  S.parseJsonWith(json, codec)
+}
 
-        mapGameConfig(
-          Array.sliceToEnd(configs, ~start=1),
-          questionIndex + 1,
-          Array.concat(games, [game]),
-        )
+let loadFromJson = json => {
+  let parsedJson = parseJson(json)
+
+  switch parsedJson {
+  | Ok(rawConfig) => {
+      let rec mapGameConfig = (configs, questionIndex, games) => {
+        switch configs[0] {
+        | Some(FaceOffConfig(faceOffConfig)) => {
+            let rawQuestion = rawConfig.questions[questionIndex]->Option.getExn
+
+            let question = FaceOff.Question.make(
+              rawQuestion.text,
+              rawQuestion.answers,
+              faceOffConfig.answers,
+            )
+
+            let game = FaceOff.make(question, faceOffConfig.multiplicator)->Game.FaceOff
+
+            mapGameConfig(
+              Array.sliceToEnd(configs, ~start=1),
+              questionIndex + 1,
+              Array.concat(games, [game]),
+            )
+          }
+
+        | Some(FastMoneyConfig(fastMoneyConfig)) => {
+            let questions =
+              rawConfig.questions
+              ->Array.slice(~start=questionIndex, ~end=questionIndex + fastMoneyConfig.questions)
+              ->Array.map(rawQuestion =>
+                FastMoney.Question.make(rawQuestion.text, rawQuestion.answers)
+              )
+
+            let game =
+              FastMoney.make(
+                questions,
+                fastMoneyConfig.timePlayer1,
+                fastMoneyConfig.timePlayer2,
+              )->Game.FastMoney
+
+            mapGameConfig(
+              Array.sliceToEnd(configs, ~start=1),
+              questionIndex + fastMoneyConfig.questions,
+              Array.concat(games, [game]),
+            )
+          }
+        | None => games
+        }
       }
 
-    | Some(FastMoneyConfig(fastMoneyConfig)) => {
-        let questions =
-          rawConfig.questions
-          ->Array.slice(~start=questionIndex, ~end=questionIndex + fastMoneyConfig.questions)
-          ->Array.map(rawQuestion => FastMoney.Question.make(rawQuestion.text, rawQuestion.answers))
-
-        let game =
-          FastMoney.make(
-            questions,
-            fastMoneyConfig.timePlayer1,
-            fastMoneyConfig.timePlayer2,
-          )->Game.FastMoney
-
-        mapGameConfig(
-          Array.sliceToEnd(configs, ~start=1),
-          questionIndex + fastMoneyConfig.questions,
-          Array.concat(games, [game]),
-        )
-      }
-    | None => games
+      Ok({
+        name: rawConfig.name,
+        games: mapGameConfig(rawConfig.gameConfigs, rawConfig.firstQuestionIndex, []),
+      })
     }
-  }
-
-  {
-    name: rawConfig.name,
-    games: mapGameConfig(rawConfig.gameConfigs, rawConfig.firstQuestionIndex, []),
+  | Error(_) as e => e
   }
 }

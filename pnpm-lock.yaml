@@ -19,6 +19,9 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  rescript-struct:
+    specifier: ^4.1.0
+    version: 4.1.0(rescript@11.0.0-alpha.3)
 
 devDependencies:
   concurrently:
@@ -687,11 +690,18 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /rescript-struct@4.1.0(rescript@11.0.0-alpha.3):
+    resolution: {integrity: sha512-iBj5or/gU4P1E0gc5janX202KeWQO+pgaTF99JkZoQno7hop6C8sw4pqaPgTwC85FUJFx5V5CfBlDwyI7VOmAw==}
+    peerDependencies:
+      rescript: 10.1.x
+    dependencies:
+      rescript: 11.0.0-alpha.3
+    dev: false
+
   /rescript@11.0.0-alpha.3:
     resolution: {integrity: sha512-nD6Pa9AleugP5k9R62VG0sY4L6N9t+plD/BFAdaZvC6bGDXKW23yDzAdfbX4DdsaAp+Ts15o20H16r1VoL2xtA==}
     hasBin: true
     requiresBuild: true
-    dev: true
 
   /resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
