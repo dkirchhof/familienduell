@@ -1,4 +1,8 @@
-%%raw(`new EventSource("/esbuild").addEventListener("change", () => location.reload())`)
+%%raw(`
+  if (process.env.NODE_ENV === "development") {
+    new EventSource("/esbuild").addEventListener("change", () => location.reload())
+  }
+`)
 
 Emotion.injectGlobal(
   `

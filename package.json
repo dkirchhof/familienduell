@@ -3,11 +3,13 @@
     "version": "1.0.0",
     "license": "MIT",
     "scripts": {
+        "build": "rescript build",
         "build-with-deps": "rescript build -with-deps",
         "build-dev": "rescript build -w",
         "bundle-and-serve-web": "node esbuild.mjs",
         "bundle-prod": "node esbuild.prod.mjs",
-        "dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others pnpm:build-dev pnpm:bundle-and-serve-web"
+        "dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others pnpm:build-dev pnpm:bundle-and-serve-web",
+        "prod": "pnpm:build pnpm:bundle-prod"
     },
     "devDependencies": {
         "concurrently": "^7.6.0",
