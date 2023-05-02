@@ -29,7 +29,7 @@ let make = props => {
         }, 4000)->ignore
       }
     | (_, FastMoney(nextFastMoney)) => {
-        FastMoneyIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
+        FastMoneyIntro(props.config.name)->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
 
         setTimeout(() => {
           nextFastMoney->FastMoney->updateGame->Broadcaster.Sync->Broadcaster.sendEvent
@@ -83,7 +83,7 @@ let make = props => {
     | Intro(_) => <IntroController next />
     | FaceOffIntro(_) => <FaceOffIntroController />
     | FaceOff(faceOff) => <FaceOffController game=faceOff updateGame=updateFaceOff next />
-    | FastMoneyIntro => <FastMoneyIntroController />
+    | FastMoneyIntro(_) => <FastMoneyIntroController />
     | FastMoney(fastMoney) => <FastMoneyController game=fastMoney updateGame=updateFastMoney updateTimer/>
     }}
   </>
