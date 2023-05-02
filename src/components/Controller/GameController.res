@@ -18,8 +18,8 @@ let make = props => {
     | (FaceOff(prevFaceOff), FaceOff(nextFaceOff)) => {
         let nextFaceOff' = {
           ...nextFaceOff,
-          team1: Team.makeWithPoints(prevFaceOff.team1.points),
-          team2: Team.makeWithPoints(prevFaceOff.team2.points),
+          teamBlue: Team.makeWithPoints(prevFaceOff.teamBlue.points),
+          teamRed: Team.makeWithPoints(prevFaceOff.teamRed.points),
         }
 
         nextFaceOff'->FaceOffIntro->updateGame->Broadcaster.Sync->Broadcaster.sendEvent

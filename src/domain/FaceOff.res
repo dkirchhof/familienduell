@@ -45,16 +45,16 @@ type t = {
   question: Question.t,
   points: int,
   multiplicator: multiplicator,
-  team1: Team.t,
-  team2: Team.t,
+  teamBlue: Team.t,
+  teamRed: Team.t,
 }
 
 let make = (question, multiplicator) => {
   question,
   points: 0,
   multiplicator,
-  team1: Team.make(),
-  team2: Team.make(),
+  teamBlue: Team.make(),
+  teamRed: Team.make(),
 }
 
 let getPointsWithMultiplicator = faceOff => {
@@ -73,32 +73,32 @@ let selectAnswer = (faceOff, answer) => {
 
 let lockTeam = (faceOff, team) =>
   switch team {
-  | Team.Team1 => {...faceOff, team1: Team.lock(faceOff.team1)}
-  | Team.Team2 => {...faceOff, team2: Team.lock(faceOff.team2)}
+  | Team.TeamBlue => {...faceOff, teamBlue: Team.lock(faceOff.teamBlue)}
+  | Team.TeamRed => {...faceOff, teamRed: Team.lock(faceOff.teamRed)}
   }
 
 let unlockTeam = (faceOff, team) =>
   switch team {
-  | Team.Team1 => {...faceOff, team1: Team.unlock(faceOff.team1)}
-  | Team.Team2 => {...faceOff, team2: Team.unlock(faceOff.team2)}
+  | Team.TeamBlue => {...faceOff, teamBlue: Team.unlock(faceOff.teamBlue)}
+  | Team.TeamRed => {...faceOff, teamRed: Team.unlock(faceOff.teamRed)}
   }
 
 let addStrike = (faceOff, team) =>
   switch team {
-  | Team.Team1 => {...faceOff, team1: Team.addStrike(faceOff.team1)}
-  | Team.Team2 => {...faceOff, team2: Team.addStrike(faceOff.team2)}
+  | Team.TeamBlue => {...faceOff, teamBlue: Team.addStrike(faceOff.teamBlue)}
+  | Team.TeamRed => {...faceOff, teamRed: Team.addStrike(faceOff.teamRed)}
   }
 
 let endRound = (faceOff, winner) =>
   switch winner {
-  | Team.Team1 => {
+  | Team.TeamBlue => {
       ...faceOff,
       points: 0,
-      team1: Team.addPoints(faceOff.team1, getPointsWithMultiplicator(faceOff)),
+      teamBlue: Team.addPoints(faceOff.teamBlue, getPointsWithMultiplicator(faceOff)),
     }
-  | Team.Team2 => {
+  | Team.TeamRed => {
       ...faceOff,
       points: 0,
-      team2: Team.addPoints(faceOff.team2, getPointsWithMultiplicator(faceOff)),
+      teamRed: Team.addPoints(faceOff.teamRed, getPointsWithMultiplicator(faceOff)),
     }
   }

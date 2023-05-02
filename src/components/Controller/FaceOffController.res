@@ -104,45 +104,45 @@ let make = props => {
     <table className=Styles.table>
       <thead>
         <tr>
-          <th> {React.string("Team 1")} </th>
-          <th> {React.string("Team 2")} </th>
+          <th> {React.string("Team Blau")} </th>
+          <th> {React.string("Team Rot")} </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td> {React.string(`Punkte: ${Int.toString(props.game.team1.points)}`)} </td>
-          <td> {React.string(`Punkte: ${Int.toString(props.game.team2.points)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(props.game.teamBlue.points)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(props.game.teamRed.points)}`)} </td>
         </tr>
         <tr>
-          <td> {React.string(`Gesperrt: ${boolToString(props.game.team1.locked)}`)} </td>
-          <td> {React.string(`Gesperrt: ${boolToString(props.game.team2.locked)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(props.game.teamBlue.locked)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(props.game.teamRed.locked)}`)} </td>
         </tr>
         <tr>
-          <td> {React.string(`Strikes: ${Int.toString(props.game.team1.strikes)}`)} </td>
-          <td> {React.string(`Strikes: ${Int.toString(props.game.team2.strikes)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(props.game.teamBlue.strikes)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(props.game.teamRed.strikes)}`)} </td>
         </tr>
         <tr>
           <td>
-            <button onClick={_ => lockTeam(Team1)}> {React.string("Sperren")} </button>
+            <button onClick={_ => lockTeam(TeamBlue)}> {React.string("Sperren")} </button>
           </td>
           <td>
-            <button onClick={_ => lockTeam(Team2)}> {React.string("Sperren")} </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick={_ => addStrike(Team1)}> {React.string("Strike hinzufügen")} </button>
-          </td>
-          <td>
-            <button onClick={_ => addStrike(Team2)}> {React.string("Strike hinzufügen")} </button>
+            <button onClick={_ => lockTeam(TeamRed)}> {React.string("Sperren")} </button>
           </td>
         </tr>
         <tr>
           <td>
-            <button onClick={_ => endRound(Team1)}> {React.string("Punkte übertragen")} </button>
+            <button onClick={_ => addStrike(TeamBlue)}> {React.string("Strike hinzufügen")} </button>
           </td>
           <td>
-            <button onClick={_ => endRound(Team2)}> {React.string("Punkte übertragen")} </button>
+            <button onClick={_ => addStrike(TeamRed)}> {React.string("Strike hinzufügen")} </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick={_ => endRound(TeamBlue)}> {React.string("Punkte übertragen")} </button>
+          </td>
+          <td>
+            <button onClick={_ => endRound(TeamRed)}> {React.string("Punkte übertragen")} </button>
           </td>
         </tr>
       </tbody>

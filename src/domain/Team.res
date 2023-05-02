@@ -4,7 +4,7 @@ type t = {
   strikes: int,
 }
 
-type choice = Team1 | Team2
+type choice = TeamBlue | TeamRed
 
 let make = () => {points: 0, locked: false, strikes: 0}
 let makeWithPoints = points => {points, locked: false, strikes: 0}
