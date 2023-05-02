@@ -9,20 +9,20 @@
         "bundle-and-serve-web": "node esbuild.mjs",
         "bundle-prod": "node esbuild.prod.mjs",
         "dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others pnpm:build-dev pnpm:bundle-and-serve-web",
-        "prod": "pnpm run build && pnpm run bundle-prod"
+        "prod": "pnpm run build-with-deps && pnpm run bundle-prod"
     },
     "devDependencies": {
-        "concurrently": "^7.6.0",
-        "esbuild": "^0.17.13",
-        "rescript": "11.0.0-alpha.3"
+        "concurrently": "^8.0.1",
+        "esbuild": "^0.17.18",
+        "rescript": "11.0.0-alpha.5"
     },
     "dependencies": {
-        "@emotion/css": "^11.10.6",
-        "@rescript/core": "^0.2.0",
+        "@emotion/css": "^11.10.8",
+        "@rescript/core": "^0.3.1",
         "@rescript/react": "^0.11.0",
         "codeflask": "^1.4.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "rescript-struct": "^4.1.0"
+        "rescript-struct": "^4.1.1"
     }
 }
