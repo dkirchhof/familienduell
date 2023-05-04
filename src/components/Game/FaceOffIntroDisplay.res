@@ -13,6 +13,6 @@ type props = {multiplicator: FaceOff.multiplicator}
 let make = props => {
   <div className=Styles.container>
     <img src={`/assets/images/${Int.toString((props.multiplicator :> int))}.png`} />
-    <audio src="/assets/sounds/roundIntro.ogg" autoPlay=true />
+    <audio src="/assets/sounds/faceOffIntro.ogg" autoPlay=true />
   </div>
 }

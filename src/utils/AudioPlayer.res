@@ -1,13 +1,19 @@
 type sound = [
-  | #revealText
-  | #revealCount
-  | #revealBoth
+  | #credits
+  | #faceOffIntro
+  | #faceOffOutro
   | #fail
-  | #fail2
+  | #fastMoneyIntro
+  | #fastMoneyInvalid
+  | #fastMoneyLoose
+  | #fastMoneyOutro
+  | #fastMoneyWin
+  | #intro
+  | #revealBoth
+  | #revealCount
+  | #revealText
+  | #timer
   | #timerEnd
-  | #endFaceOff
-  | #winFastMoney
-  | #looseFastMoney
 ]
 
 let play: sound => unit = %raw(`

@@ -1,4 +1,4 @@
 @react.component
 let make = () => {
-  <audio src="/assets/sounds/outro.ogg" autoPlay=true />
+  <audio src="/assets/sounds/credits.ogg" autoPlay=true />
 }

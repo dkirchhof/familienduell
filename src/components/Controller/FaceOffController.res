@@ -97,7 +97,7 @@ let make = props => {
 
     setGame(_ => updatedGame)
     updateDisplay(updatedGame)
-    playSound(#endFaceOff)
+    playSound(#faceOffOutro)
   }
 
   let points = game.points

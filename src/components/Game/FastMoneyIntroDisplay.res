@@ -19,6 +19,6 @@ type props = {name: string}
 let make = props => {
   <div className=Styles.container>
     {React.string(props.name)}
-    <audio src="/assets/sounds/roundIntro.ogg" autoPlay=true />
+    <audio src="/assets/sounds/fastMoneyIntro.ogg" autoPlay=true />
   </div>
 }

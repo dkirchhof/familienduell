@@ -183,7 +183,7 @@ let make = props => {
   }
 
   let invalidAnswer = () => {
-    playSound(#fail2)
+    playSound(#fastMoneyInvalid)
   }
 
   let selectAnswer = (question, player, data) => {
@@ -191,7 +191,7 @@ let make = props => {
     let newAnswer = {...oldAnswer, text: fst(data), count: snd(data)}
 
     if newAnswer.text === question.answerPlayer1.text {
-      playSound(#fail2)
+      playSound(#fastMoneyInvalid)
     } else {
       let updatedGame = FastMoney.updateAnswer(game, question, player, newAnswer)
 
@@ -283,8 +283,8 @@ let make = props => {
       </tbody>
     </table>
     <div className=Styles.buttons>
-      <button onClick={_ => playSound(#winFastMoney)}> {React.string("Gewonnen")} </button>
-      <button onClick={_ => playSound(#looseFastMoney)}> {React.string("Verloren")} </button>
+      <button onClick={_ => playSound(#fastMoneyWin)}> {React.string("Gewonnen")} </button>
+      <button onClick={_ => playSound(#fastMoneyLoose)}> {React.string("Verloren")} </button>
       <button onClick={_ => props.next()}> {React.string("Nächste Runde")} </button>
     </div>
   </>

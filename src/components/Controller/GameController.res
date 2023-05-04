@@ -43,7 +43,7 @@ let make = props => {
 
         setTimeout(() => {
           setDisplay(_ => FastMoneyGame(nextFastMoney))
-        }, 4000)->ignore
+        }, 3000)->ignore
       }
     | (_, None) => setDisplay(_ => Outro)
     }
@@ -68,7 +68,7 @@ let make = props => {
     | FaceOffGame(faceOff) => <FaceOffController game=faceOff next={f => next(Some(FaceOff(f)))} />
     | FastMoneyIntro(_) => <FastMoneyIntroController />
     | FastMoneyGame(fastMoney) => <FastMoneyController game=fastMoney next={() => next(None)} />
-    | Outro => React.null
+    | Outro => <OutroController />
     }}
   </>
 }
