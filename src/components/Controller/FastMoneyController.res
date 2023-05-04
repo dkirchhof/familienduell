@@ -150,6 +150,10 @@ let make = props => {
     Broadcaster.PlaySound(sound)->Broadcaster.sendEvent
   }
 
+  let playSoundLimited = (sound, time) => {
+    Broadcaster.PlaySoundLimited(sound, time)->Broadcaster.sendEvent
+  }
+
   let startTimer = (player: FastMoney.player) => {
     let interval = ref(Obj.magic())
     let time = ref(0)
@@ -160,6 +164,7 @@ let make = props => {
       let updatedGame = FastMoney.updateTimer(g, player, Visible(time.contents))
 
       updateDisplay(updatedGame)
+      playSoundLimited(#timer, time.contents * 1000)
 
       updatedGame
     })

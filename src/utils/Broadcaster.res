@@ -1,7 +1,8 @@
 type data =
   | UpdateDisplay(DisplayState.t)
   | UpdateDisplayAnimated(DisplayState.t)
-  | PlaySound(AudioPlayer.sound)
+  | PlaySound(AudioPlayer.file)
+  | PlaySoundLimited(AudioPlayer.file, int)
 
 type event = {data: data}
 

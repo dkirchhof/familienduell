@@ -1,4 +1,4 @@
-type sound = [
+type file = [
   | #credits
   | #faceOffIntro
   | #faceOffOutro
@@ -16,8 +16,14 @@ type sound = [
   | #timerEnd
 ]
 
-let play: sound => unit = %raw(`
-  function (sound) {
-    new Audio("/assets/sounds/" + sound + ".ogg").play();
+let play: (file, option<int>) => unit = %raw(`
+  function (file, time) {
+    const audio = new Audio("/assets/sounds/" + file + ".ogg");
+
+    audio.play();
+
+    if (time) {
+      setTimeout(() => audio.pause(), time);
+    }
   }
 `)

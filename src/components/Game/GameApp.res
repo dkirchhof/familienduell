@@ -42,7 +42,8 @@ let make = () => {
       switch event {
       | UpdateDisplay(displayState) => updateDisplay(displayState)
       | UpdateDisplayAnimated(displayState) => updateDisplayAnimated(displayState)
-      | PlaySound(sound) => AudioPlayer.play(sound)
+      | PlaySound(sound) => AudioPlayer.play(sound, None)
+      | PlaySoundLimited(sound, time) => AudioPlayer.play(sound, Some(time))
       }
     })
 
