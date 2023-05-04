@@ -1,7 +1,7 @@
 @tag("type")
 type gameConfig =
   | @as("faceOff") FaceOffConfig({answers: int, multiplicator: [#1 | #2 | #3]})
-  | @as("fastMoney") FastMoneyConfig({questions: int, timePlayer1: int, timePlayer2: int})
+  | @as("fastMoney") FastMoneyConfig({name: string, questions: int, timePlayer1: int, timePlayer2: int})
 
 type rawQuestion = {text: string, answers: array<(string, int)>}
 
@@ -23,7 +23,7 @@ let exampleConfig = JSON.stringifyAnyWithIndent(
     firstQuestionIndex: 0,
     gameConfigs: [
       FaceOffConfig({answers: 8, multiplicator: #1}),
-      FastMoneyConfig({questions: 5, timePlayer1: 20, timePlayer2: 25}),
+      FastMoneyConfig({name: "Finale", questions: 5, timePlayer1: 20, timePlayer2: 25}),
     ],
     questions: [
       {
@@ -86,6 +86,7 @@ let parseJson = (json: string) => {
             S.field(o, "type", S.literal(String("fastMoney")))->ignore
 
             FastMoneyConfig({
+              name: S.field(o, "name", S.string()),
               questions: S.field(o, "questions", S.int()),
               timePlayer1: S.field(o, "timePlayer1", S.int()),
               timePlayer2: S.field(o, "timePlayer2", S.int()),
@@ -144,6 +145,7 @@ let loadFromJson = json => {
 
             let game =
               FastMoney.make(
+                fastMoneyConfig.name,
                 questions,
                 fastMoneyConfig.timePlayer1,
                 fastMoneyConfig.timePlayer2,

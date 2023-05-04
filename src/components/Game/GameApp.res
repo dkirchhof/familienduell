@@ -23,15 +23,15 @@ module Styles = {
 
 @react.component
 let make = () => {
-  let (game, setGame) = React.useState(_ => Game.Intro(""))
+  let (displayState, setDisplayState) = React.useState(_ => DisplayState.Blank)
 
-  let updateGame = game => {
-    setGame(_ => game)
+  let updateDisplay = display => {
+    setDisplayState(_ => display)
   }
 
-  let updateGameAnimated = game => {
+  let updateDisplayAnimated = display => {
     startViewTransition(document, () => {
-      setGame(_ => game)
+      setDisplayState(_ => display)
     })
   }
 
@@ -40,41 +40,21 @@ let make = () => {
 
     Broadcaster.listen(event => {
       switch event {
-      | Sync(game) => updateGameAnimated(game)
-      | RevealBoth(game) =>
-        updateGameAnimated(game)
-        AudioPlayer.play(#revealBoth)
-      | RevealAnswerText(game) =>
-        updateGameAnimated(game)
-        AudioPlayer.play(#revealText)
-      | RevealAnswerCount(game, count) =>
-        updateGame(game)
-
-        if count > 0 {
-          AudioPlayer.play(#revealCount)
-        } else {
-          AudioPlayer.play(#fail)
-        }
-      | Strike(game) =>
-        updateGame(Game.FaceOff(game))
-        AudioPlayer.play(#fail)
-      | EndRound(game) =>
-        updateGame(Game.FaceOff(game))
-        AudioPlayer.play(#revealCount)
-      | InvalidAnswer => AudioPlayer.play(#fail2)
-      | UpdateTimer(game, time) => 
-        updateGameAnimated(Game.FastMoney(game))
-
-        if time <= 0 {
-          AudioPlayer.play(#timerEnd)
-        }
+      | UpdateDisplay(displayState) => updateDisplay(displayState)
+      | UpdateDisplayAnimated(displayState) => updateDisplayAnimated(displayState)
+      | PlaySound(sound) => AudioPlayer.play(sound)
       }
     })
 
     Some(Broadcaster.unlisten)
   })
 
-  switch game {
+  switch displayState {
+  | Blank =>
+    <>
+      <Display />
+      <StrikesOff />
+    </>
   | Intro(name) =>
     <>
       <Display>
@@ -82,14 +62,14 @@ let make = () => {
       </Display>
       <StrikesOff />
     </>
-  | FaceOffIntro(faceOff) =>
+  | FaceOffIntro(multiplicator) =>
     <>
       <Display>
-        <FaceOffIntroDisplay faceOff />
+        <FaceOffIntroDisplay multiplicator />
       </Display>
       <StrikesOff />
     </>
-  | FaceOff(faceOff) =>
+  | FaceOffGame(faceOff) =>
     <>
       <Display>
         <FaceOffDisplay faceOff />
@@ -103,10 +83,17 @@ let make = () => {
       </Display>
       <StrikesOff />
     </>
-  | FastMoney(fastMoney) =>
+  | FastMoneyGame(fastMoney) =>
     <>
       <Display>
         <FastMoneyDisplay fastMoney />
+      </Display>
+      <StrikesOff />
+    </>
+  | Outro =>
+    <>
+      <Display>
+        <OutroDisplay />
       </Display>
       <StrikesOff />
     </>

@@ -18,7 +18,7 @@ module Styles = {
     }
   `)
 
-  let timer = css(`
+  let buttons = css(`
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -26,8 +26,18 @@ module Styles = {
 
   let answer = css(`
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr 6rem 6rem;
     gap: 0.5rem;
+  `)
+
+  let invalidAnswer = css(`
+    margin-top: 0.5rem;
+
+    text-align: right;
+    
+    > button {
+      width: 12.5rem;
+    }
   `)
 
   let input = css(`
@@ -41,6 +51,7 @@ module Answers = {
   type props = {
     answers: array<(string, int)>,
     select: (FastMoney.player, (string, int)) => unit,
+    invalidAnswer: unit => unit,
   }
 
   let make = props => {
@@ -58,6 +69,9 @@ module Answers = {
         </div>
       )
       ->React.array}
+      <div className=Styles.invalidAnswer>
+        <button onClick={_ => props.invalidAnswer()}> {React.string("Doppelte Antwort")} </button>
+      </div>
     </td>
   }
 }
@@ -112,30 +126,64 @@ module PlayerInputs = {
 
 type props = {
   game: FastMoney.t,
-  updateGame: FastMoney.t => FastMoney.t,
-  updateTimer: (FastMoney.player, FastMoney.Timer.t) => unit,
+  next: unit => unit,
 }
 
 let make = props => {
-  let startTimer = player => {
-    let interval = ref(Obj.magic())
-    let time = FastMoney.getTimer(props.game, player)->FastMoney.Timer.getTime->ref
+  let (game, setGame) = React.useState(_ => props.game)
 
-    props.updateTimer(player, FastMoney.Timer.Visible(time.contents))
+  React.useEffect1(() => {
+    setGame(_ => props.game)
+
+    None
+  }, [props.game])
+
+  let updateDisplay = game => {
+    Broadcaster.UpdateDisplay(FastMoneyGame(game))->Broadcaster.sendEvent
+  }
+
+  let updateDisplayAnimated = game => {
+    Broadcaster.UpdateDisplayAnimated(FastMoneyGame(game))->Broadcaster.sendEvent
+  }
+
+  let playSound = sound => {
+    Broadcaster.PlaySound(sound)->Broadcaster.sendEvent
+  }
+
+  let startTimer = (player: FastMoney.player) => {
+    let interval = ref(Obj.magic())
+    let time = ref(0)
+
+    setGame(g => {
+      time := FastMoney.getTimer(g, player)->FastMoney.Timer.getTime
+
+      let updatedGame = FastMoney.updateTimer(g, player, Visible(time.contents))
+
+      updateDisplay(updatedGame)
+
+      updatedGame
+    })
 
     interval := setInterval(() => {
-        time := time.contents - 1
+        setGame(g => {
+          time := time.contents - 1
 
-        props.updateTimer(player, FastMoney.Timer.Visible(time.contents))
+          if time.contents === 0 {
+            clearInterval(interval.contents)
+            playSound(#timerEnd)
+          }
 
-        if time.contents === 0 {
-          clearInterval(interval.contents)
-        }
+          let updatedGame = FastMoney.updateTimer(g, player, Visible(time.contents))
+
+          updateDisplay(updatedGame)
+
+          updatedGame
+        })
       }, 1000)
   }
 
-  let updateAnswer = (question, player, answer) => {
-    FastMoney.updateAnswer(props.game, question, player, answer)->props.updateGame
+  let invalidAnswer = () => {
+    playSound(#fail2)
   }
 
   let selectAnswer = (question, player, data) => {
@@ -143,38 +191,48 @@ let make = props => {
     let newAnswer = {...oldAnswer, text: fst(data), count: snd(data)}
 
     if newAnswer.text === question.answerPlayer1.text {
-      Broadcaster.InvalidAnswer->Broadcaster.sendEvent
+      playSound(#fail2)
     } else {
-      updateAnswer(question, player, newAnswer)->ignore
+      let updatedGame = FastMoney.updateAnswer(game, question, player, newAnswer)
+
+      setGame(_ => updatedGame)
     }
   }
 
   let revealAnswerText = (question, player, answer) => {
-    updateAnswer(question, player, answer)
-    ->FastMoney
-    ->Broadcaster.RevealAnswerText
-    ->Broadcaster.sendEvent
+    let updatedGame = FastMoney.updateAnswer(game, question, player, answer)
+
+    setGame(_ => updatedGame)
+    updateDisplayAnimated(updatedGame)
+    playSound(#revealText)
   }
 
   let revealAnswerCount = (question, player, answer) => {
-    let updated = updateAnswer(question, player, answer)
+    let updatedGame = FastMoney.updateAnswer(game, question, player, answer)
 
-    Broadcaster.RevealAnswerCount(FastMoney(updated), answer.count)->Broadcaster.sendEvent
+    setGame(_ => updatedGame)
+    updateDisplay(updatedGame)
+
+    if answer.count > 0 {
+      playSound(#revealCount)
+    } else {
+      playSound(#fail)
+    }
   }
 
-  let points = FastMoney.getPoints(props.game)
+  let points = FastMoney.getPoints(game)
 
   <>
     <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
-    <div className=Styles.timer>
-      {switch props.game.timerPlayer1 {
+    <div className=Styles.buttons>
+      {switch game.timerPlayer1 {
       | Hidden(time) =>
         <button onClick={_ => startTimer(Player1)}>
           {React.string(`Timer Spieler 1 starten (${Int.toString(time)})`)}
         </button>
       | Visible(time) => <span> {React.string(`Timer Spieler 1: ${Int.toString(time)}`)} </span>
       }}
-      {switch props.game.timerPlayer2 {
+      {switch game.timerPlayer2 {
       | Hidden(time) =>
         <button onClick={_ => startTimer(Player2)}>
           {React.string(`Timer Spieler 2 starten (${Int.toString(time)})`)}
@@ -195,7 +253,7 @@ let make = props => {
         </tr>
       </thead>
       <tbody>
-        {props.game.questions
+        {game.questions
         ->Array.mapWithIndex((question, i) =>
           <tr key={Int.toString(i)}>
             <th> {(i + 1)->Int.toString->React.string} </th>
@@ -203,16 +261,19 @@ let make = props => {
             <Answers
               answers=question.answers
               select={(player, data) => selectAnswer(question, player, data)}
+              invalidAnswer
             />
             <PlayerInputs
               answer=question.answerPlayer1
-              update={answer => updateAnswer(question, Player1, answer)->ignore}
+              update={answer =>
+                setGame(_ => FastMoney.updateAnswer(game, question, Player1, answer))}
               revealText={revealAnswerText(question, Player1)}
               revealCount={revealAnswerCount(question, Player1)}
             />
             <PlayerInputs
               answer=question.answerPlayer2
-              update={answer => updateAnswer(question, Player2, answer)->ignore}
+              update={answer =>
+                setGame(_ => FastMoney.updateAnswer(game, question, Player2, answer))}
               revealText={revealAnswerText(question, Player2)}
               revealCount={revealAnswerCount(question, Player2)}
             />
@@ -221,5 +282,10 @@ let make = props => {
         ->React.array}
       </tbody>
     </table>
+    <div className=Styles.buttons>
+      <button onClick={_ => playSound(#winFastMoney)}> {React.string("Gewonnen")} </button>
+      <button onClick={_ => playSound(#looseFastMoney)}> {React.string("Verloren")} </button>
+      <button onClick={_ => props.next()}> {React.string("Nächste Runde")} </button>
+    </div>
   </>
 }

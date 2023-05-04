@@ -23,6 +23,7 @@ module Question = {
   let make = (question: string, answers: array<(string, int)>, numberOfAnswers) => {
     text: question,
     answers: answers
+    ->Array.sort(((_, countA), (_, countB)) => countB - countA)
     ->Array.slice(~start=0, ~end=numberOfAnswers)
     ->Array.map(((text, count)) => Answer.make(text, count)),
   }

@@ -35,7 +35,7 @@ module Question = {
 
   let make = (question: string, answers: array<(string, int)>) => {
     text: question,
-    answers,
+    answers: answers->Array.sort(((_, countA), (_, countB)) => countB - countA),
     answerPlayer1: Answer.make(),
     answerPlayer2: Answer.make(),
   }
@@ -56,12 +56,14 @@ module Question = {
 }
 
 type t = {
+  name: string,
   questions: array<Question.t>,
   timerPlayer1: Timer.t,
   timerPlayer2: Timer.t,
 }
 
-let make = (questions, timePlayer1, timePlayer2) => {
+let make = (name, questions, timePlayer1, timePlayer2) => {
+  name,
   questions,
   timerPlayer1: Hidden(timePlayer1),
   timerPlayer2: Hidden(timePlayer2),

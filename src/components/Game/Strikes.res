@@ -15,7 +15,10 @@ module Styles = {
     }
  `)
 
-  let x = (strikes, min) => css(`color: ${Theme.Colors.get(strikes >= min ? #accent : #tertiary)}`)
+  let x = (team: Team.t, minStrikes) =>
+    css(
+      `color: ${Theme.Colors.get(team.strikes >= minStrikes || team.locked ? #accent : #tertiary)}`,
+    )
 }
 
 type props = {
@@ -26,13 +29,13 @@ type props = {
 let make = props =>
   <div className=Styles.container>
     <div>
-      <span className={Styles.x(props.teamBlue.strikes, 1)}> {React.string("X")} </span>
-      <span className={Styles.x(props.teamBlue.strikes, 2)}> {React.string("X")} </span>
-      <span className={Styles.x(props.teamBlue.strikes, 3)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamBlue, 1)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamBlue, 2)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamBlue, 3)}> {React.string("X")} </span>
     </div>
     <div>
-      <span className={Styles.x(props.teamRed.strikes, 1)}> {React.string("X")} </span>
-      <span className={Styles.x(props.teamRed.strikes, 2)}> {React.string("X")} </span>
-      <span className={Styles.x(props.teamRed.strikes, 3)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamRed, 1)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamRed, 2)}> {React.string("X")} </span>
+      <span className={Styles.x(props.teamRed, 3)}> {React.string("X")} </span>
     </div>
   </div>

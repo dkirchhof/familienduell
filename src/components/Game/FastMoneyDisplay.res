@@ -157,5 +157,6 @@ let make = (props: props) => {
         }}
       </div>
     </footer>
+    <audio src="/assets/sounds/revealText.ogg" autoPlay=true />
   </div>
 }

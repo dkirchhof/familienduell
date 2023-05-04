@@ -29,62 +29,88 @@ let boolToString = value =>
 
 type props = {
   game: FaceOff.t,
-  updateGame: FaceOff.t => FaceOff.t,
-  next: unit => unit,
+  next: FaceOff.t => unit,
 }
 
 let make = props => {
+  let (game, setGame) = React.useState(_ => props.game)
+
+  React.useEffect1(() => {
+    setGame(_ => props.game)
+
+    None
+  }, [props.game])
+
+  let updateDisplay = game => {
+    Broadcaster.UpdateDisplay(FaceOffGame(game))->Broadcaster.sendEvent
+  }
+
+  let updateDisplayAnimated = game => {
+    Broadcaster.UpdateDisplayAnimated(FaceOffGame(game))->Broadcaster.sendEvent
+  }
+
+  let playSound = sound => {
+    Broadcaster.PlaySound(sound)->Broadcaster.sendEvent
+  }
+
   let selectAnswer = answer => {
-    FaceOff.selectAnswer(props.game, answer)
-    ->props.updateGame
-    ->FaceOff
-    ->Broadcaster.RevealBoth
-    ->Broadcaster.sendEvent
+    let updatedGame = FaceOff.selectAnswer(game, answer)
+
+    setGame(_ => updatedGame)
+    updateDisplayAnimated(updatedGame)
+    playSound(#revealBoth)
   }
 
   let revealAnswer = answer => {
-    FaceOff.revealAnswer(props.game, answer)
-    ->props.updateGame
-    ->FaceOff
-    ->Broadcaster.RevealBoth
-    ->Broadcaster.sendEvent
+    let updatedGame = FaceOff.revealAnswer(game, answer)
+
+    setGame(_ => updatedGame)
+    updateDisplayAnimated(updatedGame)
+    playSound(#revealBoth)
   }
 
   let lockTeam = team => {
-    FaceOff.lockTeam(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent
+    let updatedGame = FaceOff.lockTeam(game, team)
+
+    setGame(_ => updatedGame)
+    updateDisplay(updatedGame)
+    playSound(#fail)
 
     let _ = setTimeout(() => {
-      FaceOff.unlockTeam(props.game, team)
-      ->props.updateGame
-      ->FaceOff
-      ->Broadcaster.Sync
-      ->Broadcaster.sendEvent
+      let updatedGame = FaceOff.unlockTeam(game, team)
+
+      setGame(_ => updatedGame)
+      updateDisplay(updatedGame)
     }, 1000)
   }
 
   let addStrike = team => {
-    FaceOff.addStrike(props.game, team)->props.updateGame->Broadcaster.Strike->Broadcaster.sendEvent
+    let updatedGame = FaceOff.addStrike(game, team)
+
+    setGame(_ => updatedGame)
+    updateDisplay(updatedGame)
+    playSound(#fail)
   }
 
   let endRound = team => {
-    FaceOff.endRound(props.game, team)
-    ->props.updateGame
-    ->Broadcaster.EndRound
-    ->Broadcaster.sendEvent
+    let updatedGame = FaceOff.endRound(game, team)
+
+    setGame(_ => updatedGame)
+    updateDisplay(updatedGame)
+    playSound(#endFaceOff)
   }
 
-  let points = props.game.points
-  let x = (props.game.multiplicator :> int)
-  let pointsX = FaceOff.getPointsWithMultiplicator(props.game)
+  let points = game.points
+  let x = (game.multiplicator :> int)
+  let pointsX = FaceOff.getPointsWithMultiplicator(game)
 
   <div>
-    // <div> {React.string(roundToString(props.game.round))} </div>
-    <div> {React.string(`Frage: ${props.game.question.text}`)} </div>
+    <div> {React.string(`Frage: ${game.question.text}`)} </div>
     <div> {React.string(`Punkte: ${Int.toString(points)}`)} </div>
     <div> {React.string(`Punkte x${Int.toString(x)}: ${Int.toString(pointsX)}`)} </div>
     <table className=Styles.table>
       <tbody>
-        {props.game.question.answers
+        {game.question.answers
         ->Array.mapWithIndex((answer, i) =>
           <tr key={Int.toString(i)} disabled={answer.revealed}>
             <th> {(i + 1)->Int.toString->React.string} </th>
@@ -110,16 +136,16 @@ let make = props => {
       </thead>
       <tbody>
         <tr>
-          <td> {React.string(`Punkte: ${Int.toString(props.game.teamBlue.points)}`)} </td>
-          <td> {React.string(`Punkte: ${Int.toString(props.game.teamRed.points)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(game.teamBlue.points)}`)} </td>
+          <td> {React.string(`Punkte: ${Int.toString(game.teamRed.points)}`)} </td>
         </tr>
         <tr>
-          <td> {React.string(`Gesperrt: ${boolToString(props.game.teamBlue.locked)}`)} </td>
-          <td> {React.string(`Gesperrt: ${boolToString(props.game.teamRed.locked)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(game.teamBlue.locked)}`)} </td>
+          <td> {React.string(`Gesperrt: ${boolToString(game.teamRed.locked)}`)} </td>
         </tr>
         <tr>
-          <td> {React.string(`Strikes: ${Int.toString(props.game.teamBlue.strikes)}`)} </td>
-          <td> {React.string(`Strikes: ${Int.toString(props.game.teamRed.strikes)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(game.teamBlue.strikes)}`)} </td>
+          <td> {React.string(`Strikes: ${Int.toString(game.teamRed.strikes)}`)} </td>
         </tr>
         <tr>
           <td>
@@ -131,15 +157,21 @@ let make = props => {
         </tr>
         <tr>
           <td>
-            <button onClick={_ => addStrike(TeamBlue)}> {React.string("Strike hinzufügen")} </button>
+            <button onClick={_ => addStrike(TeamBlue)}>
+              {React.string("Strike hinzufügen")}
+            </button>
           </td>
           <td>
-            <button onClick={_ => addStrike(TeamRed)}> {React.string("Strike hinzufügen")} </button>
+            <button onClick={_ => addStrike(TeamRed)}>
+              {React.string("Strike hinzufügen")}
+            </button>
           </td>
         </tr>
         <tr>
           <td>
-            <button onClick={_ => endRound(TeamBlue)}> {React.string("Punkte übertragen")} </button>
+            <button onClick={_ => endRound(TeamBlue)}>
+              {React.string("Punkte übertragen")}
+            </button>
           </td>
           <td>
             <button onClick={_ => endRound(TeamRed)}> {React.string("Punkte übertragen")} </button>
@@ -147,6 +179,6 @@ let make = props => {
         </tr>
       </tbody>
     </table>
-    <button onClick={_ => props.next()}> {React.string("Nächste Runde")} </button>
+    <button onClick={_ => props.next(game)}> {React.string("Nächste Runde")} </button>
   </div>
 }

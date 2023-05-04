@@ -27,11 +27,11 @@ module Styles = {
   `)
 }
 
-type props = {children: Jsx.element}
+type props = {children?: Jsx.element}
 
 let make = props => {
   <div className=Styles.display>
-    {props.children}
+    {props.children->Option.getWithDefault(React.null)}
     <div className=Styles.shadow />
   </div>
 }

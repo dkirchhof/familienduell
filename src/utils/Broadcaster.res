@@ -1,12 +1,7 @@
 type data =
-  | Sync(Game.t)
-  | RevealBoth(Game.t)
-  | RevealAnswerText(Game.t)
-  | RevealAnswerCount(Game.t, int)
-  | Strike(FaceOff.t)
-  | EndRound(FaceOff.t)
-  | InvalidAnswer
-  | UpdateTimer(FastMoney.t, int)
+  | UpdateDisplay(DisplayState.t)
+  | UpdateDisplayAnimated(DisplayState.t)
+  | PlaySound(AudioPlayer.sound)
 
 type event = {data: data}
 
