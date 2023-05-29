@@ -15,7 +15,7 @@ const watchPlugin = {
 }
 
 const ctx = await esbuild.context({
-  entryPoints: ["src/index.mjs"],
+  entryPoints: ["src/client/index.mjs"],
   outfile: "public/bundle.js",
   bundle: true,
   sourcemap: true,

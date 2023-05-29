@@ -9,12 +9,13 @@
         "bundle-and-serve-web": "node esbuild.mjs",
         "bundle-prod": "node esbuild.prod.mjs",
         "dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others pnpm:build-dev pnpm:bundle-and-serve-web",
-        "prod": "pnpm run build-with-deps && pnpm run bundle-prod"
+        "prod": "pnpm run build-with-deps && pnpm run bundle-prod",
+        "server": "deno run --allow-net src/server/server.mjs"
     },
     "devDependencies": {
         "concurrently": "^8.0.1",
         "esbuild": "^0.17.18",
-        "rescript": "11.0.0-alpha.5"
+        "rescript": "11.0.0-beta.1"
     },
     "dependencies": {
         "@emotion/css": "^11.10.8",

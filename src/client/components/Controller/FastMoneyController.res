@@ -272,15 +272,15 @@ let make = props => {
               answer=question.answerPlayer1
               update={answer =>
                 setGame(_ => FastMoney.updateAnswer(game, question, Player1, answer))}
-              revealText={revealAnswerText(question, Player1)}
-              revealCount={revealAnswerCount(question, Player1)}
+              revealText={revealAnswerText(question, Player1, _)}
+              revealCount={revealAnswerCount(question, Player1, _)}
             />
             <PlayerInputs
               answer=question.answerPlayer2
               update={answer =>
                 setGame(_ => FastMoney.updateAnswer(game, question, Player2, answer))}
-              revealText={revealAnswerText(question, Player2)}
-              revealCount={revealAnswerCount(question, Player2)}
+              revealText={revealAnswerText(question, Player2, _)}
+              revealCount={revealAnswerCount(question, Player2, _)}
             />
           </tr>
         )
