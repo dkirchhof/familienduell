@@ -125,12 +125,15 @@ module PlayerInputs = {
 }
 
 type props = {
+  bcSender: Broadcaster.Sender.t,
   game: FastMoney.t,
   next: unit => unit,
 }
 
 let make = props => {
   let (game, setGame) = React.useState(_ => props.game)
+
+  let broadcast = Broadcaster.Sender.sendEvent(props.bcSender, _)
 
   React.useEffect1(() => {
     setGame(_ => props.game)
@@ -139,19 +142,19 @@ let make = props => {
   }, [props.game])
 
   let updateDisplay = game => {
-    Broadcaster.UpdateDisplay(FastMoneyGame(game))->Broadcaster.sendEvent
+    broadcast(UpdateDisplay(FastMoneyGame(game)))
   }
 
   let updateDisplayAnimated = game => {
-    Broadcaster.UpdateDisplayAnimated(FastMoneyGame(game))->Broadcaster.sendEvent
+    broadcast(UpdateDisplayAnimated(FastMoneyGame(game)))
   }
 
   let playSound = sound => {
-    Broadcaster.PlaySound(sound)->Broadcaster.sendEvent
+    broadcast(PlaySound(sound))
   }
 
   let playSoundLimited = (sound, time) => {
-    Broadcaster.PlaySoundLimited(sound, time)->Broadcaster.sendEvent
+    broadcast(PlaySoundLimited(sound, time))
   }
 
   let startTimer = (player: FastMoney.player) => {

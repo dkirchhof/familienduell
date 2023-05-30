@@ -14,16 +14,26 @@ module Target = {
   @send external addEventListener: (t, string, unit => unit) => unit = "addEventListener"
 }
 
-module Context = {
+module Request = {
   type t
+
+  let getBody: t => 'a = %raw(`
+    function(request) {
+      return request.body().value;
+    }
+  `)
+}
+
+module Context = {
+  type t = {request: Request.t}
 
   @send external sendEvents: t => Target.t = "sendEvents"
 
   let setBody: (t, string) => unit = %raw(`
-      function(ctx, body) {
-        ctx.response.body = body; 
-      }
-    `)
+    function(ctx, body) {
+      ctx.response.body = body; 
+    }
+  `)
 }
 
 module Router = {
@@ -35,7 +45,7 @@ module Router = {
   @send external allowedMethods: t => {..} = "allowedMethods"
 
   @send external get: (t, string, Context.t => unit) => unit = "get"
+  @send external post: (t, string, Context.t => unit) => unit = "post"
 }
 
-@module("https://deno.land/x/cors/mod.ts")
-@val external cors: unit => {..} = "oakCors"
+@module("https://deno.land/x/cors/mod.ts") @val external cors: unit => {..} = "oakCors"

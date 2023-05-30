@@ -28,12 +28,15 @@ let boolToString = value =>
   }
 
 type props = {
+  bcSender: Broadcaster.Sender.t,
   game: FaceOff.t,
   next: FaceOff.t => unit,
 }
 
 let make = props => {
   let (game, setGame) = React.useState(_ => props.game)
+
+  let broadcast = Broadcaster.Sender.sendEvent(props.bcSender, _)
 
   React.useEffect1(() => {
     setGame(_ => props.game)
@@ -42,15 +45,15 @@ let make = props => {
   }, [props.game])
 
   let updateDisplay = game => {
-    Broadcaster.UpdateDisplay(FaceOffGame(game))->Broadcaster.sendEvent
+    broadcast(UpdateDisplay(FaceOffGame(game)))
   }
 
   let updateDisplayAnimated = game => {
-    Broadcaster.UpdateDisplayAnimated(FaceOffGame(game))->Broadcaster.sendEvent
+    broadcast(UpdateDisplayAnimated(FaceOffGame(game)))
   }
 
   let playSound = sound => {
-    Broadcaster.PlaySound(sound)->Broadcaster.sendEvent
+    broadcast(PlaySound(sound))
   }
 
   let selectAnswer = answer => {

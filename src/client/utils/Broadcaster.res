@@ -1,3 +1,5 @@
+type options = BroadcastChannel(string) | ServerSendEvent(string)
+
 type data =
   | UpdateDisplay(DisplayState.t)
   | UpdateDisplayAnimated(DisplayState.t)
@@ -5,27 +7,50 @@ type data =
   | PlaySoundLimited(AudioPlayer.file, int)
 
 type event = {data: data}
+type jsonEvent = {data: string}
 
-module BroadcastChannel = {
-  type t
+module Sender = {
+  type t = BroadcastChannel(BroadcastChannel.sender) | ServerSendEvent(ServerSendEvent.sender)
 
-  @send external sendEvent: (t, data) => unit = "postMessage"
-  @send external addEventListener: (t, @as("message") _, event => unit) => unit = "addEventListener"
-  @send external close: t => unit = "close"
+  let make = (options: options): t => {
+    switch options {
+    | BroadcastChannel(channelName) => BroadcastChannel.makeSender(channelName)->BroadcastChannel
+    | ServerSendEvent(serverUrl) => ServerSendEvent.makeSender(serverUrl)->ServerSendEvent
+    }
+  }
+
+  let sendEvent = (sender: t, event: data) => {
+    switch sender {
+    | BroadcastChannel(channel) => BroadcastChannel.sendEvent(channel, event)
+    | ServerSendEvent(serverUrl) => ServerSendEvent.sendEvent(serverUrl, event)
+    }
+  }
 }
 
-@new external make: string => BroadcastChannel.t = "BroadcastChannel"
+module Receiver = {
+  type t = BroadcastChannel(BroadcastChannel.receiver) | ServerSendEvent(ServerSendEvent.receiver)
 
-let bc = make("familienduell")
+  let make = (options: options): t => {
+    switch options {
+    | BroadcastChannel(channelName) => BroadcastChannel.makeReceiver(channelName)->BroadcastChannel
+    | ServerSendEvent(serverUrl) => ServerSendEvent.makeReceiver(serverUrl)->ServerSendEvent
+    }
+  }
 
-let listen = callback => {
-  BroadcastChannel.addEventListener(bc, event => callback(event.data))
-}
+  let listen = (receiver: t, callback) => {
+    switch receiver {
+    | BroadcastChannel(channel) =>
+      BroadcastChannel.addEventListener(channel, (event: event) => event.data->callback)
+    | ServerSendEvent(eventSource) =>
+      ServerSendEvent.addEventListener(eventSource, (event: jsonEvent) =>
+        event.data->JSON.parseExn->Obj.magic->callback
+      )
+    }
+  }
 
-let unlisten = () => {
-  BroadcastChannel.close(bc)
-}
-
-let sendEvent = event => {
-  BroadcastChannel.sendEvent(bc, event)
+  // let unlisten = (receiver: t) => {
+  //   switch receiver {
+  //   | BroadcastChannel(channel) => BroadcastChannel.close(channel)
+  //   }
+  // }
 }
