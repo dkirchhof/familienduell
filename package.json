@@ -10,7 +10,8 @@
         "bundle-prod": "node esbuild.prod.mjs",
         "dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others pnpm:build-dev pnpm:bundle-and-serve-web",
         "prod": "pnpm run build-with-deps && pnpm run bundle-prod",
-        "server": "deno run --allow-net --allow-sys src/server/server.mjs"
+        "run-server": "deno run --allow-net --allow-sys src/server/server.mjs",
+        "compile-server-windows": "deno compile --allow-net --allow-sys --target x86_64-pc-windows-msvc src/server/server.mjs"
     },
     "devDependencies": {
         "concurrently": "^8.0.1",

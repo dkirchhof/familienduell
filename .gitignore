@@ -9,3 +9,5 @@ bundle.min.js
 
 !esbuild.mjs
 !esbuild.prod.mjs
+
+server.exe
