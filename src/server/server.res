@@ -28,6 +28,7 @@ Oak.Router.get(router, "/sse", ctx => {
 Oak.Application.use(app, Oak.cors())
 Oak.Application.use(app, Oak.Router.routes(router))
 Oak.Application.use(app, Oak.Router.allowedMethods(router))
+Oak.Application.use(app, StaticFiles.serve("public/"))
 
 Oak.Application.listen(app, {"port": 8000})
 
