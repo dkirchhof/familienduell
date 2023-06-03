@@ -2,6 +2,12 @@ module Styles = {
   open Emotion
 
   let table = css(`
+    margin: 1rem 0;
+
+    @media(max-width: 480px) {
+      width: 100%;
+    }
+
     border-collapse: collapse;
     border: 1px solid;
     
@@ -35,7 +41,7 @@ module Styles = {
 
     text-align: right;
     
-    > button {
+    > Button {
       width: 12.5rem;
     }
   `)
@@ -60,17 +66,17 @@ module Answers = {
       ->Array.mapWithIndex((answer, i) =>
         <div key={Int.toString(i)} className=Styles.answer>
           <span> {React.string(`${fst(answer)} (${Int.toString(snd(answer))})`)} </span>
-          <button onClick={_ => props.select(Player1, answer)}>
+          <Button onClick={_ => props.select(Player1, answer)}>
             {React.string("-> Spieler 1")}
-          </button>
-          <button onClick={_ => props.select(Player2, answer)}>
+          </Button>
+          <Button onClick={_ => props.select(Player2, answer)}>
             {React.string("-> Spieler 2")}
-          </button>
+          </Button>
         </div>
       )
       ->React.array}
       <div className=Styles.invalidAnswer>
-        <button onClick={_ => props.invalidAnswer()}> {React.string("Doppelte Antwort")} </button>
+        <Button onClick={_ => props.invalidAnswer()}> {React.string("Doppelte Antwort")} </Button>
       </div>
     </td>
   }
@@ -105,7 +111,7 @@ module PlayerInputs = {
       <td disabled=props.answer.textRevealed>
         <div className=Styles.input>
           <input value={props.answer.text} onChange={onTextChange} />
-          <button onClick={_ => revealText()}> {React.string("Aufdecken")} </button>
+          <Button onClick={_ => revealText()}> {React.string("Aufdecken")} </Button>
         </div>
       </td>
       <td disabled=props.answer.countRevealed>
@@ -117,7 +123,7 @@ module PlayerInputs = {
             value={props.answer.count->Int.toString}
             onChange={onCountChange}
           />
-          <button onClick={_ => revealCount()}> {React.string("Aufdecken")} </button>
+          <Button onClick={_ => revealCount()}> {React.string("Aufdecken")} </Button>
         </div>
       </td>
     </>
@@ -235,16 +241,16 @@ let make = props => {
     <div className=Styles.buttons>
       {switch game.timerPlayer1 {
       | Hidden(time) =>
-        <button onClick={_ => startTimer(Player1)}>
+        <Button onClick={_ => startTimer(Player1)}>
           {React.string(`Timer Spieler 1 starten (${Int.toString(time)})`)}
-        </button>
+        </Button>
       | Visible(time) => <span> {React.string(`Timer Spieler 1: ${Int.toString(time)}`)} </span>
       }}
       {switch game.timerPlayer2 {
       | Hidden(time) =>
-        <button onClick={_ => startTimer(Player2)}>
+        <Button onClick={_ => startTimer(Player2)}>
           {React.string(`Timer Spieler 2 starten (${Int.toString(time)})`)}
-        </button>
+        </Button>
       | Visible(time) => <span> {React.string(`Timer Spieler 2: ${Int.toString(time)}`)} </span>
       }}
     </div>
@@ -291,9 +297,9 @@ let make = props => {
       </tbody>
     </table>
     <div className=Styles.buttons>
-      <button onClick={_ => playSound(#fastMoneyWin)}> {React.string("Gewonnen")} </button>
-      <button onClick={_ => playSound(#fastMoneyLoose)}> {React.string("Verloren")} </button>
-      <button onClick={_ => props.next()}> {React.string("Nächste Runde")} </button>
+      <Button onClick={_ => playSound(#fastMoneyWin)}> {React.string("Gewonnen")} </Button>
+      <Button onClick={_ => playSound(#fastMoneyLoose)}> {React.string("Verloren")} </Button>
+      <Button onClick={_ => props.next()}> {React.string("Nächste Runde")} </Button>
     </div>
   </>
 }

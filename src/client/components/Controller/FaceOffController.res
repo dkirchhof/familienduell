@@ -2,6 +2,12 @@ module Styles = {
   open Emotion
 
   let table = css(`
+    margin: 1rem 0;
+
+    @media(max-width: 480px) {
+      width: 100%;
+    }
+
     border-collapse: collapse;
     border: 1px solid;
     
@@ -120,10 +126,10 @@ let make = props => {
             <td> {answer.text->React.string} </td>
             <td> {answer.count->Int.toString->React.string} </td>
             <td>
-              <button onClick={_ => selectAnswer(answer)}> {React.string(`Beantworten`)} </button>
+              <Button onClick={_ => selectAnswer(answer)}> {React.string(`Beantworten`)} </Button>
             </td>
             <td>
-              <button onClick={_ => revealAnswer(answer)}> {React.string(`Aufdecken`)} </button>
+              <Button onClick={_ => revealAnswer(answer)}> {React.string(`Aufdecken`)} </Button>
             </td>
           </tr>
         )
@@ -152,36 +158,36 @@ let make = props => {
         </tr>
         <tr>
           <td>
-            <button onClick={_ => lockTeam(TeamBlue)}> {React.string("Sperren")} </button>
+            <Button onClick={_ => lockTeam(TeamBlue)}> {React.string("Sperren")} </Button>
           </td>
           <td>
-            <button onClick={_ => lockTeam(TeamRed)}> {React.string("Sperren")} </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick={_ => addStrike(TeamBlue)}>
-              {React.string("Strike hinzufügen")}
-            </button>
-          </td>
-          <td>
-            <button onClick={_ => addStrike(TeamRed)}>
-              {React.string("Strike hinzufügen")}
-            </button>
+            <Button onClick={_ => lockTeam(TeamRed)}> {React.string("Sperren")} </Button>
           </td>
         </tr>
         <tr>
           <td>
-            <button onClick={_ => endRound(TeamBlue)}>
+            <Button onClick={_ => addStrike(TeamBlue)}>
+              {React.string("Strike hinzufügen")}
+            </Button>
+          </td>
+          <td>
+            <Button onClick={_ => addStrike(TeamRed)}>
+              {React.string("Strike hinzufügen")}
+            </Button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <Button onClick={_ => endRound(TeamBlue)}>
               {React.string("Punkte übertragen")}
-            </button>
+            </Button>
           </td>
           <td>
-            <button onClick={_ => endRound(TeamRed)}> {React.string("Punkte übertragen")} </button>
+            <Button onClick={_ => endRound(TeamRed)}> {React.string("Punkte übertragen")} </Button>
           </td>
         </tr>
       </tbody>
     </table>
-    <button onClick={_ => props.next(game)}> {React.string("Nächste Runde")} </button>
+    <Button onClick={_ => props.next(game)}> {React.string("Nächste Runde")} </Button>
   </div>
 }

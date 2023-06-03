@@ -87,10 +87,10 @@ let make = () => {
           <input value=serverUrl placeholder="http://192.168.0.100:8000" onChange=changeIP />
         </label>
       </div>
-      <button onClick={_ => setApp(_ => Some(Configurator))}>
+      <Button onClick={_ => setApp(_ => Some(Configurator))}>
         {React.string("Controller öffnen")}
-      </button>
-      <button onClick={_ => setApp(_ => Some(Game))}> {React.string("Monitor öffnen")} </button>
+      </Button>
+      <Button onClick={_ => setApp(_ => Some(Game))}> {React.string("Monitor öffnen")} </Button>
     </>
   }
 }

@@ -46,6 +46,6 @@ let make = (props: props) => {
   <>
     <CodeEditor editorRef className=Styles.editor />
     <p className=Styles.error> {React.string(error)} </p>
-    <button onClick=onSetConfigClick> {React.string("Konfiguration übernehmen")} </button>
+    <Button onClick=onSetConfigClick> {React.string("Konfiguration übernehmen")} </Button>
   </>
 }
