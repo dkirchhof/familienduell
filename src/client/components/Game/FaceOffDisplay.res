@@ -51,6 +51,7 @@ module Styles = {
 
     display: grid;
     grid-template-columns: auto 1fr auto;
+    gap: 0.25rem;
   `)
 
   let sum = css(`

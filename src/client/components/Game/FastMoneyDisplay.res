@@ -11,8 +11,11 @@ module Styles = {
 
       display: grid;
       grid-template-columns: 1fr 1.3rem 1.3rem 1fr;
-      gap: 0.5rem;
+      gap: 0.25rem;
       align-items: center;
+
+      font-size: 1.05rem;
+      line-height: 1.25;
     }
 
     > footer {

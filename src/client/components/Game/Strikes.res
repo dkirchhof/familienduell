@@ -2,10 +2,12 @@ module Styles = {
   open Emotion
 
   let container = css(`
-    padding: 0.5rem 1rem;
+    padding: 0.25rem 1rem;
 
     display: flex;
     justify-content: space-between;
+
+    font-size: 1.5rem;
 
     > div {
       width: 4rem;
