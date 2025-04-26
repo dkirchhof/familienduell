@@ -5,9 +5,17 @@
     "scripts": {
         "build": "rescript build",
         "build-dev": "rescript build -w",
+
         "bundle": "bun build src/client/index.mjs --outfile public/bundle.js --minify",
         "bundle-dev": "bun build src/client/index.mjs --outfile public/bundle.js --watch",
+
         "run-server": "bun --watch src/server/server.mjs",
+
+        "compile-server-linux": "bun build --compile --target=bun-linux-x64 src/server/server.mjs --outfile server",
+        "compile-server-windows": "bun build --compile --target=bun-windows-x64 src/server/server.mjs --outfile server",
+
+        "zip": "zip windows.zip -r public server.exe",
+
         "_bundle-and-serve-web": "node esbuild.mjs",
         "_bundle-prod": "node esbuild.prod.mjs",
         "_dev": "NINJA_ANSI_FORCED=1 concurrently --kill-others bun:build-dev bun:bundle-and-serve-web",

@@ -11,3 +11,4 @@ bundle.min.js
 !esbuild.prod.mjs
 
 server.exe
+windows.zip
