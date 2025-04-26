@@ -21,11 +21,8 @@ module Styles = {
   `
 }
 
-type props = {
-  bcOptions: Broadcaster.options,
-}
-
-let make = (props: props) => {
+@react.component
+let make = () => {
   let (displayState, setDisplayState) = React.useState(_ => DisplayState.Blank)
 
   let updateDisplay = display => {
@@ -41,9 +38,7 @@ let make = (props: props) => {
   React.useEffect0(() => {
     Emotion.injectGlobal(Styles.globalStyle)
 
-    let bcReceiver = Broadcaster.Receiver.make(props.bcOptions)
-
-    Broadcaster.Receiver.listen(bcReceiver, event => {
+    Global.listenToEvents(event => {
       switch event {
       | UpdateDisplay(displayState) => updateDisplay(displayState)
       | UpdateDisplayAnimated(displayState) => updateDisplayAnimated(displayState)

@@ -1,24 +1,11 @@
-type props = {
-  config: Config.t,
-  bcOptions: Broadcaster.options,
-}
+type props = {config: Config.t}
 
 let make = props => {
   let (gameIndex, setGameIndex) = React.useState(_ => 0)
   let (display, setDisplay) = React.useState(_ => DisplayState.Intro(props.config.name))
 
-  let bcSender = React.useRef(Obj.magic())
-  let broadcast = React.useRef(Obj.magic())
-
-  React.useEffect0(() => {
-    bcSender.current = Broadcaster.Sender.make(props.bcOptions)
-    broadcast.current = Broadcaster.Sender.sendEvent(bcSender.current, _)
-
-    None
-  })
-
   React.useEffect1(() => {
-    broadcast.current(UpdateDisplayAnimated(display))
+    Global.sendEvent(UpdateDisplayAnimated(display))
 
     None
   }, [display])
@@ -62,11 +49,11 @@ let make = props => {
     }
   }
 
-  React.useEffect0(() => {
-    broadcast.current(UpdateDisplayAnimated(display))
+  // React.useEffect0(() => {
+  //   broadcast.current(UpdateDisplayAnimated(display))
 
-    None
-  })
+  //   None
+  // })
 
   <>
     <div>
@@ -79,12 +66,10 @@ let make = props => {
     | Intro(_) => <IntroController next={() => next(None)} />
     | FaceOffIntro(_) => <FaceOffIntroController />
     | FaceOffGame(faceOff) =>
-      <FaceOffController
-        bcSender=bcSender.current game=faceOff next={f => next(Some(FaceOff(f)))}
-      />
+      <FaceOffController game=faceOff next={f => next(Some(FaceOff(f)))} />
     | FastMoneyIntro(_) => <FastMoneyIntroController />
     | FastMoneyGame(fastMoney) =>
-      <FastMoneyController bcSender=bcSender.current game=fastMoney next={() => next(None)} />
+      <FastMoneyController game=fastMoney next={() => next(None)} />
     | Outro => <OutroController />
     }}
   </>

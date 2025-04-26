@@ -10,7 +10,7 @@ module Styles = {
 
     border-collapse: collapse;
     border: 1px solid;
-    
+
     th, td {
       padding: 0.5rem;
 
@@ -40,7 +40,7 @@ module Styles = {
     margin-top: 0.5rem;
 
     text-align: right;
-    
+
     > Button {
       width: 12.5rem;
     }
@@ -131,15 +131,12 @@ module PlayerInputs = {
 }
 
 type props = {
-  bcSender: Broadcaster.Sender.t,
   game: FastMoney.t,
   next: unit => unit,
 }
 
 let make = props => {
   let (game, setGame) = React.useState(_ => props.game)
-
-  let broadcast = Broadcaster.Sender.sendEvent(props.bcSender, _)
 
   React.useEffect1(() => {
     setGame(_ => props.game)
@@ -148,19 +145,19 @@ let make = props => {
   }, [props.game])
 
   let updateDisplay = game => {
-    broadcast(UpdateDisplay(FastMoneyGame(game)))
+    Global.sendEvent(UpdateDisplay(FastMoneyGame(game)))
   }
 
   let updateDisplayAnimated = game => {
-    broadcast(UpdateDisplayAnimated(FastMoneyGame(game)))
+    Global.sendEvent(UpdateDisplayAnimated(FastMoneyGame(game)))
   }
 
   let playSound = sound => {
-    broadcast(PlaySound(sound))
+    Global.sendEvent(PlaySound(sound))
   }
 
   let playSoundLimited = (sound, time) => {
-    broadcast(PlaySoundLimited(sound, time))
+    Global.sendEvent(PlaySoundLimited(sound, time))
   }
 
   let startTimer = (player: FastMoney.player) => {

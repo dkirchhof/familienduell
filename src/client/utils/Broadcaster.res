@@ -1,5 +1,3 @@
-type options = BroadcastChannel(string) | ServerSendEvent(string)
-
 type data =
   | UpdateDisplay(DisplayState.t)
   | UpdateDisplayAnimated(DisplayState.t)
@@ -9,48 +7,25 @@ type data =
 type event = {data: data}
 type jsonEvent = {data: string}
 
-module Sender = {
-  type t = BroadcastChannel(BroadcastChannel.sender) | ServerSendEvent(ServerSendEvent.sender)
+type t
 
-  let make = (options: options): t => {
-    switch options {
-    | BroadcastChannel(channelName) => BroadcastChannel.makeSender(channelName)->BroadcastChannel
-    | ServerSendEvent(serverUrl) => ServerSendEvent.makeSender(serverUrl)->ServerSendEvent
-    }
-  }
-
-  let sendEvent = (sender: t, event: data) => {
-    switch sender {
-    | BroadcastChannel(channel) => BroadcastChannel.sendEvent(channel, event)
-    | ServerSendEvent(serverUrl) => ServerSendEvent.sendEvent(serverUrl, event)
-    }
-  }
+let make = () => {
+  WebSocket.make("/ws")
 }
 
-module Receiver = {
-  type t = BroadcastChannel(BroadcastChannel.receiver) | ServerSendEvent(ServerSendEvent.receiver)
-
-  let make = (options: options): t => {
-    switch options {
-    | BroadcastChannel(channelName) => BroadcastChannel.makeReceiver(channelName)->BroadcastChannel
-    | ServerSendEvent(serverUrl) => ServerSendEvent.makeReceiver(serverUrl)->ServerSendEvent
-    }
-  }
-
-  let listen = (receiver: t, callback) => {
-    switch receiver {
-    | BroadcastChannel(channel) =>
-      BroadcastChannel.addEventListener(channel, (event: event) => event.data->callback)
-    | ServerSendEvent(eventSource) =>
-      ServerSendEvent.addEventListener(eventSource, (event: jsonEvent) =>
-        event.data->JSON.parseExn->Obj.magic->callback
-      )
-    }
-  }
-
-  // let unlisten = (receiver: t) => {
-  //   switch receiver {
-  //   | BroadcastChannel(channel) => BroadcastChannel.close(channel)
-  //   }
-  // }
+let sendEvent = (ws: WebSocket.t, event: data) => {
+  Console.log(event)
+  WebSocket.sendEvent(ws, event)
 }
+
+let listen = (ws: WebSocket.t, callback: data => unit) => {
+  WebSocket.addEventListener(ws, (event: jsonEvent) =>
+    event.data->JSON.parseExn->Obj.magic->callback
+  )
+}
+
+//   // let unlisten = (receiver: t) => {
+//   //   switch receiver {
+//   //   | BroadcastChannel(channel) => BroadcastChannel.close(channel)
+//   //   }
+//   // }

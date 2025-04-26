@@ -1,38 +1,40 @@
-let app = Oak.Application.make()
-let router = Oak.Router.make()
-let clients = ref([])
+let clients: ref<array<Bun.WebSocket.t>> = ref([])
 
-Oak.Router.post(router, "/bc", ctx => {
-  let _ = Oak.Request.getBody(ctx.request)->Promise.thenResolve(body => {
-    Array.forEach(
-      clients.contents,
-      target => {
-        Oak.Target.dispatchMessage(target, body)
-      },
-    )
+let spa = async _ => {
+  Bun.File.make(`./public/index.html`)->Bun.Response.makeWithFile
+}
 
-    Oak.Context.setBody(ctx, "OK")
-  })
+Bun.Server.serve({
+  port: 8000,
+  routes: Dict.fromArray([("/", spa)]),
+  fetch: async (req, server) => {
+    let url = Bun.URL.make(req.url)
+
+    if url.pathname === "/ws" {
+      server.upgrade(req)
+    } else {
+      Bun.File.make(`./public/${url.pathname}`)->Bun.Response.makeWithFile
+    }
+  },
+  websocket: {
+    \"open": socket => {
+      Console.log("open")
+      clients := Array.concat(clients.contents, [socket])
+    },
+    close: socket => {
+      Console.log("close")
+      clients := Array.filter(clients.contents, client => client !== socket)
+    },
+    message: (_socket, message) => {
+      Array.forEach(clients.contents, socket => {
+        socket.send(message)
+      })
+    },
+  },
 })
 
-Oak.Router.get(router, "/sse", ctx => {
-  let target = Oak.Context.sendEvents(ctx)
-
-  clients := Array.concat(clients.contents, [target])
-
-  Oak.Target.addEventListener(target, "close", () => {
-    clients := Array.filter(clients.contents, t => t !== target)
-  })
-})
-
-Oak.Application.use(app, Oak.cors())
-Oak.Application.use(app, Oak.Router.routes(router))
-Oak.Application.use(app, Oak.Router.allowedMethods(router))
-Oak.Application.use(app, StaticFiles.serve("public/"))
-
-Oak.Application.listen(app, {"port": 8000})
-
-Deno.networkInterfaces()
+Bun.NetworkInterface.getInterfaces()
+->Dict.valuesToArray
+->Array.flat
 ->Array.filter(interface => interface.family === "IPv4" && interface.netmask === "255.255.255.0")
-->Array.map(interface => interface.address)
-->Array.forEach(ip => Console.log(`http://${ip}:8000`))
+->Array.forEach(interface => Console.log(`http://${interface.address}:8000`))

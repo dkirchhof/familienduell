@@ -2,7 +2,11 @@
     "name": "timetracker",
     "sources": [
         {
-            "dir": "src",
+            "dir": "src/client",
+            "subdirs": true
+        },
+        {
+            "dir": "src/server",
             "subdirs": true
         }
     ],
